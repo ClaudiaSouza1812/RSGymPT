@@ -1,4 +1,20 @@
-﻿using System;
+﻿/*
+    CLASS ELEMENTS:
+        Attributes or fields    = variáveis privadas da classe (suporte às propriedades)
+        Properties              = caraterísticas
+        Methods                 = funcionalidades
+        Constructors            = funcionalidade invocada aquando da criação do objeto
+        Destructor              = funcionalidade que permite indicar como é que o objeto é destruído
+    EXEMPLO
+        Classe: Produto
+        Objects (instâncias da classe): Produto1, Produto2, Produto3...
+        Properties: Nome, Cor, Unidade, ...
+        Methods: Inserir, Pesquisar, Editar, Apagar, ...
+        Constructor: Cor = verde
+        Destructor (log): informar que o objeto vai ser destruído
+
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +41,9 @@ namespace RSGymPT
         internal int Id { get; }
         internal static int NextId { get; set; } = 1;
         internal string Name { get; set; }
+        internal DateTime Birth { get; set; }
+        internal string UserName { get; set; }
+        internal string Password { get; set; }
 
         #endregion
 
