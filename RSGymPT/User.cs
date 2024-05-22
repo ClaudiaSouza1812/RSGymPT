@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utility;
 
 namespace RSGymPT
 {
@@ -73,15 +74,42 @@ namespace RSGymPT
         #endregion
         #endregion
 
-        #region Constructors (Public)
+        #region Constructors (public or internal)
         // Fazer substituto do default constructor
 
-
+        internal User()
+        {
+            Id = NextId++;
+            Name = string.Empty;
+            Birth = DateTime.MinValue;
+            UserName = string.Empty;
+            Password = string.Empty;
+        }
         // Fazer segundo construtor com inserção parâmetros obrigatórios
 
+        internal User(string name, DateTime birth, string userName, string password)
+        {
+            Id = NextId++;
+            Name = name;
+            Birth = birth;
+            UserName = userName;
+            Password = password;
+        }
         #endregion
 
         #region Methods (public or internal)
+
+        internal static void ListUser(List<User> list) 
+        {
+            RSGymUtility.WriteTitle("User - List", "\n", "\n\n");
+
+            foreach (User item in list)
+            {
+                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth}", "", "\n");
+            }
+        }
+
+
 
         #endregion
 
