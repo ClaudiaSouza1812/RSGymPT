@@ -99,9 +99,20 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
+        internal static void MakeUser(List<User> list)
+        {
+            User user01 = new User("Claudia Simone de Souza", new DateTime(1992, 12, 18), "clasi", "12345678");
+
+            list.Add(user01);
+
+            User user02 = new User("Paula de Fátima Vallim Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321");
+
+            list.Add(user02);
+        }
+
         internal static void ListUser(List<User> list) 
         {
-            RSGymUtility.WriteTitle("User - List", "\n", "\n\n");
+            RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
 
             foreach (User item in list)
             {
