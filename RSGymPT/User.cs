@@ -105,7 +105,7 @@ namespace RSGymPT
 
             foreach (User item in list)
             {
-                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth}", "", "\n");
+                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth.ToShortDateString()}", "", "\n\n");
             }
         }
 
