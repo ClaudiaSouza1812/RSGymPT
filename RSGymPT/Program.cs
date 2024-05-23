@@ -17,6 +17,8 @@ namespace RSGymPT
 
             User.MakeUser(users);
 
+            
+            
             User.ListUser(users);
 
             RSGymUtility.TerminateConsole();
