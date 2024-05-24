@@ -16,10 +16,12 @@
  */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utility;
+
 
 namespace RSGymPT
 {
@@ -116,7 +118,7 @@ namespace RSGymPT
 
             foreach (User item in list)
             {
-                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth.ToShortDateString()}", "", "\n\n");
+                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth.ToShortDateString()}\nPassword: {item.Password}", "", "\n\n");
             }
         }
 

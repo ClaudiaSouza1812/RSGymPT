@@ -17,7 +17,7 @@ namespace RSGymPT
 
             User.MakeUser(users);
 
-            
+            Login.LogInUser(users);
             
             User.ListUser(users);
 

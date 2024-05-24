@@ -69,6 +69,8 @@ namespace RSGymPT
         internal string Operators { get; set; } // Todo MRS: propriedade no singular
         */
 
+        internal string UserName { get; set; }
+        internal string Password { get; set; }
         #endregion
 
         #region Classic properties 1.0 (use field)
@@ -139,14 +141,55 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        internal static void AskUser()
+        internal void AskUserName()
         {
-            RSGymUtility.WriteMessage("Insira seu nome de usuário: ");
+            RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
+
+            UserName = Console.ReadLine();
+
+            CheckUserName();
+        }
+
+        internal void CheckUserName()
+        {
+            if (UserName.Length != 5)
+            {
+                RSGymUtility.WriteMessage("O nome de utilizador deve ter cinco (5) caracteres.", "", "\n");
+
+                AskUserName();
+            }
+            else
+            {
+                AskUserPassword();
+            }
+        }
+
+        internal void AskUserPassword()
+        {
+            RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
+
+            Password = Console.ReadLine();
+
+            CheckUserPassword();
+        }
+
+        internal void CheckUserPassword()
+        {
+            if (Password.Length < 8 || Password.Length > 16)
+            {
+                RSGymUtility.WriteMessage("A palavra-passe deve ter no mínimo oito (8) caracteres e não deve exceder dezesseis (16) caracteres.", "", "\n");
+
+                AskUserPassword();
+            }
+            else
+            {
+                return;
+            }
         }
 
         internal static void LogInUser(List<User> users)
         {
-
+            AskUserName();
         }
 
         #endregion
