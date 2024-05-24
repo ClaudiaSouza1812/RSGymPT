@@ -141,18 +141,21 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        internal void AskUserName()
+        
+
+        internal static string AskUserName()
         {
             RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
 
-            UserName = Console.ReadLine();
-
-            CheckUserName();
+            string userName = Console.ReadLine();
+            
+            return userName;
         }
 
-        internal void CheckUserName()
+        /*
+        internal static string CheckUserName(string userName)
         {
-            if (UserName.Length != 5)
+            if (userName.Length != 5)
             {
                 RSGymUtility.WriteMessage("O nome de utilizador deve ter cinco (5) caracteres.", "", "\n");
 
@@ -160,38 +163,51 @@ namespace RSGymPT
             }
             else
             {
-                AskUserPassword();
+                user.UserName = userName;
+
+                AskUserPassword(user);
             }
         }
 
-        internal void AskUserPassword()
+        internal static void AskUserPassword(User user)
         {
             RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
 
-            Password = Console.ReadLine();
+            string password = Console.ReadLine();
 
-            CheckUserPassword();
+            CheckUserPassword(user, password);
         }
 
-        internal void CheckUserPassword()
+        internal static void CheckUserPassword(User user, string password)
         {
-            if (Password.Length < 8 || Password.Length > 16)
+            if (password.Length < 8 || password.Length > 16)
             {
                 RSGymUtility.WriteMessage("A palavra-passe deve ter no mínimo oito (8) caracteres e não deve exceder dezesseis (16) caracteres.", "", "\n");
 
-                AskUserPassword();
+                AskUserPassword(user);
             }
             else
             {
+                user.Password = password;
                 return;
             }
         }
 
-        internal static void LogInUser(List<User> users)
+        
+        internal static void LogInUser()
         {
-            AskUserName();
-        }
 
+            
+
+            User user = new User();
+            string userName;
+
+            userName = AskUserName();
+
+            CheckUserName(userName);
+
+        }
+        */
         #endregion
 
         #region Destructor

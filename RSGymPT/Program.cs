@@ -11,15 +11,25 @@ namespace RSGymPT
     {
         static void Main(string[] args)
         {
+            //
             RSGymUtility.SetUnicodeConsole();
 
-            List<User> users = new List<User>();
+            User.MakeUser();
 
-            User.MakeUser(users);
+            Dictionary<string, string> loginMenu = LoginUtility.ShowLoginMenu();
 
-            Login.LogInUser(users);
+            string key = LoginUtility.GetLoginChoice();
+
+            string action = LoginUtility.CheckLoginChoice(loginMenu, key);
+
+
             
-            User.ListUser(users);
+
+
+
+            //Login.LogInUser();
+            
+            //User.ListUser(users);
 
             RSGymUtility.TerminateConsole();
         

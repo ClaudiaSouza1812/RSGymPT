@@ -101,16 +101,25 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        internal static void MakeUser(List<User> list)
+        // Metodo para criar utilizadores fictícios.
+        internal static void MakeUser()
         {
-            User user01 = new User("Claudia Simone de Souza", new DateTime(1992, 12, 18), "clasi", "12345678");
+            List<User> users = new List<User>(); 
 
-            list.Add(user01);
+            User user01 = new User();
+
+            user01.Name = "Claudia Simone de Souza";
+            user01.Birth = new DateTime(1992, 12, 18);
+            user01.UserName = "clasi";
+            user01.Password = "12345678";
+
+            users.Add(user01);
 
             User user02 = new User("Paula de Fátima Vallim Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321");
 
-            list.Add(user02);
+            users.Add(user02);
         }
+
 
         internal static void ListUser(List<User> list) 
         {
@@ -118,7 +127,7 @@ namespace RSGymPT
 
             foreach (User item in list)
             {
-                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth.ToShortDateString()}\nPassword: {item.Password}", "", "\n\n");
+                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth.ToShortDateString()}", "", "\n\n");
             }
         }
 
