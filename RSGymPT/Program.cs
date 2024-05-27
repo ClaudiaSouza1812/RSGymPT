@@ -11,7 +11,6 @@ namespace RSGymPT
     {
         static void Main(string[] args)
         {
-            //
             RSGymUtility.SetUnicodeConsole();
 
             User.MakeUser();

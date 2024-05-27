@@ -58,7 +58,9 @@ namespace RSGymPT
                 RSGymUtility.WriteMessage($"{item}\n");
             }
 
-            RSGymUtility.WriteMessage("Bem vindo! Vamos malhar hoje? ", "", "\n\n");
+            string message = "Bem vindo! Vamos treinar?";
+
+            RSGymUtility.WriteMessage($"{message.PadLeft(16 - (message.Length / 2) + message.Length, ' ')}", "", "\n\n");
 
             Console.ForegroundColor = ConsoleColor.White;
         }
@@ -72,7 +74,7 @@ namespace RSGymPT
 
                 ShowRsgymMenu();
 
-                RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n", "\n");
+                RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
 
                 loginNumber = Console.ReadLine();
 
