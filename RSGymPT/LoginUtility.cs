@@ -13,9 +13,9 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            PrintLogo();
-
             RSGymUtility.WriteTitle("RSGymPT Menu", "", "\n\n");
+
+            PrintLogo();
 
             RSGymUtility.WriteMessage("Bem vindo! Vamos malhar hoje? ", "", "\n\n");
 
@@ -37,14 +37,18 @@ namespace RSGymPT
         {
             string[] logo =
             {
-                " --- ",
-                "| _/|",
-                " ---      __",
-                " | |     |  |",
-                " | |´***`|  |",
-                " |__________|"
+                "-------------------------------",
+                "|  _____    _____   ___       |",
+                "| | |   |  |  ___| | _/|      |",
+                "| | |___|  | |___  |___|      |",
+                "| | |\\\\    |___  |  | |       |",
+                "| | | \\\\    ___| |  | |´ ' `\\ |",
+                "| |_|  \\\\  |_____|  |_______/ |",
+                "|                             |",
+                "-------------------------------"
             };
 
+            
             foreach (string item in logo)
             {
                 RSGymUtility.WriteMessage($"{item}\n");
