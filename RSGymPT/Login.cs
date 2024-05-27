@@ -145,6 +145,10 @@ namespace RSGymPT
 
         internal static string AskUserName()
         {
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("Login", "", "\n\n");
+
             RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
 
             string userName = Console.ReadLine();
@@ -168,7 +172,7 @@ namespace RSGymPT
                 AskUserPassword(user);
             }
         }
-
+        */
         internal static void AskUserPassword(User user)
         {
             RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
@@ -204,10 +208,10 @@ namespace RSGymPT
 
             userName = AskUserName();
 
-            CheckUserName(userName);
+            //CheckUserName(userName);
 
         }
-        */
+        
         #endregion
 
         #region Destructor

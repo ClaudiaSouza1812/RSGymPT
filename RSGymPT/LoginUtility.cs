@@ -9,11 +9,15 @@ namespace RSGymPT
 {
     internal class LoginUtility
     {
-        internal static Dictionary<string, string> ShowLoginMenu()
+        internal static Dictionary<string, string> ShowRsgymMenu()
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Login Menu", "", "\n\n");
+            PrintLogo();
+
+            RSGymUtility.WriteTitle("RSGymPT Menu", "", "\n\n");
+
+            RSGymUtility.WriteMessage("Bem vindo! Vamos malhar hoje? ", "", "\n\n");
 
             Dictionary<string, string> loginMenu = new Dictionary<string, string>()
             {
@@ -23,10 +27,28 @@ namespace RSGymPT
 
             foreach (KeyValuePair<string, string> item in loginMenu)
             {
-                RSGymUtility.WriteMessage($"({item.Key}) {item.Value}", "", "\n");
+                RSGymUtility.WriteMessage($"({item.Key}) - {item.Value}", "", "\n");
             }
 
             return loginMenu;
+        }
+
+        internal static void PrintLogo()
+        {
+            string[] logo =
+            {
+                " --- ",
+                "| _/|",
+                " ---      __",
+                " | |     |  |",
+                " | |´***`|  |",
+                " |__________|"
+            };
+
+            foreach (string item in logo)
+            {
+                RSGymUtility.WriteMessage($"{item}\n");
+            }
         }
 
         internal static string GetLoginChoice()
@@ -34,6 +56,10 @@ namespace RSGymPT
             string loginNumber;
             do
             {
+                Console.Clear();
+
+                ShowRsgymMenu();
+
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n", "\n");
 
                 loginNumber = Console.ReadLine();
@@ -56,10 +82,9 @@ namespace RSGymPT
             }
             else
             {
-                RSGymUtility.WriteMessage($"Escolha um número válido {loginMenu.Keys}", "", "\n");
+                RSGymUtility.WriteMessage($"Escolha um número válido: (1) ou (2).", "", "\n");
                 return GetLoginChoice();
             }
-
         }
 
         internal static bool CheckInt(string loginNumber)

@@ -15,12 +15,26 @@ namespace RSGymPT
             RSGymUtility.SetUnicodeConsole();
 
             User.MakeUser();
+            
+            Dictionary<string, string> rsgymMenu = LoginUtility.ShowRsgymMenu();
+            string action, key;
 
-            Dictionary<string, string> loginMenu = LoginUtility.ShowLoginMenu();
+            do
+            {
+                key = LoginUtility.GetLoginChoice();
+                action = LoginUtility.CheckLoginChoice(rsgymMenu, key);
 
-            string key = LoginUtility.GetLoginChoice();
+                if (action == "Login")
+                {
+                    Login.LogInUser();
+                }
+                else
+                {
+                    RSGymUtility.WriteMessage($"Opção inválida. Por favor escolha das opções: ({rsgymMenu.Keys})");
+                }
 
-            string action = LoginUtility.CheckLoginChoice(loginMenu, key);
+            } while (action != "Sair");
+            
 
 
             
