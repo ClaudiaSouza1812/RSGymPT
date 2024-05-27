@@ -11,6 +11,7 @@ namespace RSGymPT
     {
         static void Main(string[] args)
         {
+            // Method to output characters encoded to UTF-8 
             RSGymUtility.SetUnicodeConsole();
 
             User.MakeUser();
