@@ -13,11 +13,9 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("RSGymPT Menu", "", "\n\n");
-
             PrintLogo();
 
-            RSGymUtility.WriteMessage("Bem vindo! Vamos malhar hoje? ", "", "\n\n");
+            RSGymUtility.WriteTitle("RSGymPT Menu", "", "\n\n");
 
             Dictionary<string, string> loginMenu = new Dictionary<string, string>()
             {
@@ -35,6 +33,12 @@ namespace RSGymPT
 
         internal static void PrintLogo()
         {
+            
+
+            RSGymUtility.WriteTitle("RSGymPT APP", "", "\n\n");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+
             string[] logo =
             {
                 "-------------------------------",
@@ -53,6 +57,10 @@ namespace RSGymPT
             {
                 RSGymUtility.WriteMessage($"{item}\n");
             }
+
+            RSGymUtility.WriteMessage("Bem vindo! Vamos malhar hoje? ", "", "\n\n");
+
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         internal static string GetLoginChoice()

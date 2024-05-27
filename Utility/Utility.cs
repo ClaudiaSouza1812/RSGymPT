@@ -23,7 +23,7 @@ namespace Utility
         public static void WriteTitle(string title, string beginTitle = "", string endTitle = "")
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write($"{beginTitle}{new string('-', 32)}\n{title.ToUpper().PadLeft(33 - title.Length, ' ')}\n{new string('-', 32)}{endTitle}");
+            Console.Write($"{beginTitle}{new string('-', 32)}\n{title.ToUpper().PadLeft(16 - (title.Length / 2) + title.Length , ' ')}\n{new string('-', 32)}{endTitle}");
             Console.ForegroundColor = ConsoleColor.White;   // Reset original color
         }
 
