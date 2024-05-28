@@ -13,9 +13,8 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            PrintLogo();
-
             RSGymUtility.WriteTitle("RSGymPT Menu", "", "\n\n");
+            RSGymUtility.WriteMessage("Escolha o número de uma das seguintes opções: ", endMessage: "\n\n");
 
             Dictionary<string, string> loginMenu = new Dictionary<string, string>()
             {
@@ -31,13 +30,14 @@ namespace RSGymPT
             return loginMenu;
         }
 
-        internal static void PrintLogo()
+        // Show RSGymPT logo
+        internal static void ShowLogo(string status)
         {
-            
+            Console.Clear();
 
             RSGymUtility.WriteTitle("RSGymPT APP", "", "\n\n");
 
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Yellow;
 
             string[] logo =
             {
@@ -52,37 +52,55 @@ namespace RSGymPT
                 "-------------------------------"
             };
 
-            
             foreach (string item in logo)
             {
                 RSGymUtility.WriteMessage($"{item}\n");
             }
 
-            string message = "Bem vindo! Vamos treinar?";
-
-            RSGymUtility.WriteMessage($"{message.PadLeft(16 - (message.Length / 2) + message.Length, ' ')}", "", "\n\n");
+            ShowLogoMessage(status);
 
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        // Show RSGymPT logo message
+        internal static void ShowLogoMessage(string status)
+        {
+            string message01 = "Bem vindo! Vamos treinar?";
+            string message02 = "Até a próxima!";
+
+            if (status == "begin")
+            {
+                RSGymUtility.WriteMessage($"{message01.PadLeft(15 - (message01.Length / 2) + message01.Length, ' ')}", "", "\n\n");
+
+                RSGymUtility.PauseConsole();
+            }
+            else
+            {
+                RSGymUtility.WriteMessage($"{message02.PadLeft(15 - (message02.Length / 2) + message02.Length, ' ')}", "", "\n\n");
+            }
+        }
+
+        // Get user login choice
         internal static string GetLoginChoice()
         {
             string loginNumber;
+            bool status;
             do
             {
-                Console.Clear();
-
                 ShowRsgymMenu();
 
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
 
                 loginNumber = Console.ReadLine();
 
-            } while (!CheckInt(loginNumber));
+                status = CheckInt(loginNumber);
+
+            } while (!status);
 
             return loginNumber;
         }
 
+        // Check if the input is a valid choice
         internal static string CheckLoginChoice(Dictionary<string, string> loginMenu, string key)
         {
             string action;
@@ -94,23 +112,18 @@ namespace RSGymPT
             {
                 return action;
             }
-            else
-            {
-                RSGymUtility.WriteMessage($"Escolha um número válido: (1) ou (2).", "", "\n");
-                return GetLoginChoice();
-            }
+
+            RSGymUtility.WriteMessage($"Escolha um número válido: (1) ou (2).", "\n", "\n");
+
+            RSGymUtility.PauseConsole();
+
+            return null;
         }
 
         internal static bool CheckInt(string loginNumber)
         {
-            if (int.TryParse(loginNumber, out int number))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            bool status = int.TryParse(loginNumber, out int number);
+            return status;
         }
 
 

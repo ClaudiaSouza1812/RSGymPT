@@ -15,7 +15,9 @@ namespace RSGymPT
             RSGymUtility.SetUnicodeConsole();
 
             User.MakeUser();
-            
+
+            LoginUtility.ShowLogo("begin");
+
             Dictionary<string, string> rsgymMenu = LoginUtility.ShowRsgymMenu();
             string action, key;
 
@@ -28,21 +30,18 @@ namespace RSGymPT
                 {
                     Login.LogInUser();
                 }
-                else
-                {
-                    RSGymUtility.WriteMessage($"Opção inválida. Por favor escolha das opções: ({rsgymMenu.Keys})");
-                }
-
+                
             } while (action != "Sair");
+
+            LoginUtility.ShowLogo("end");
+
             
 
-
-            
 
 
 
             //Login.LogInUser();
-            
+
             //User.ListUser(users);
 
             RSGymUtility.TerminateConsole();
