@@ -165,17 +165,20 @@ namespace RSGymPT
         
         internal static void CheckUserName(List<User> users, string userName)
         {
-            foreach (User item in users)
+            foreach (User user in users)
             {
-                if (item.UserName == userName)
+                if (user.UserName == userName)
                 {
                     UserName = userName;
 
                     AskUserPassword(users);
+                    return;
                 }
             }
 
             RSGymUtility.WriteMessage("Nome de utilizador inválido.", "", "\n");
+
+            RSGymUtility.PauseConsole();
         }
         
 
@@ -183,23 +186,27 @@ namespace RSGymPT
         {
             RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
 
-            string password = Console.ReadLine();
+            string password = Console.ReadLine().ToLower();
 
             CheckUserPassword(users, password);
         }
 
         internal static void CheckUserPassword(List<User> users, string password)
         {
-            foreach (User item in users)
+            foreach (User user in users)
             {
-                if (item.Password == password)
+                if (user.Password == password)
                 {
                     Password = password;
-                    LoginUtility.ShowMainMenu();
+                    LoginUtility.GetChoice("main");
+
+                    return;
                 }
             }
 
-            RSGymUtility.WriteMessage("A palavra-passe deve ter no mínimo oito (8) caracteres e não deve exceder dezesseis (16) caracteres.", "", "\n");
+            RSGymUtility.WriteMessage("Palavra-passe inválida.", "", "\n");
+
+            RSGymUtility.PauseConsole();
         }
 
         

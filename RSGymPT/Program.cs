@@ -19,24 +19,24 @@ namespace RSGymPT
             LoginUtility.ShowLogo("begin");
 
             Dictionary<string, string> loginMenu = LoginUtility.ShowLoginMenu();
-            string action, key;
+            string loginAction, loginKey;
 
             do
             {
-                key = LoginUtility.GetLoginChoice();
-                action = LoginUtility.CheckLoginChoice(loginMenu, key);
+                loginKey = LoginUtility.GetChoice("login");
+                loginAction = LoginUtility.CheckLoginChoice(loginMenu, loginKey);
 
-                if (action == "Login")
+                if (loginAction == "Login")
                 {
                     Login.LogInUser(users);
                 }
                 
-            } while (action != "Sair");
+            } while (loginAction != "Sair");
 
             LoginUtility.ShowLogo("end");
 
-            
 
+            
 
 
 

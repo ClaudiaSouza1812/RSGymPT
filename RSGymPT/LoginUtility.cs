@@ -13,8 +13,7 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Login RSGymPT Menu", "", "\n\n");
-            RSGymUtility.WriteMessage("Escolha o número de uma das seguintes opções: ", endMessage: "\n\n");
+            RSGymUtility.WriteTitle("RSGymPT Login Menu", "", "\n\n");
 
             Dictionary<string, string> loginMenu = new Dictionary<string, string>()
             {
@@ -34,12 +33,11 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Main RSGymPT Menu", "", "\n\n");
-            RSGymUtility.WriteMessage("Escolha o número do menu e do submenu: ", endMessage: "\n\n");
-
+            RSGymUtility.WriteTitle("RSGymPT Main Menu", "", "\n\n");
+            
             Dictionary<string, Dictionary<string, string>> mainMenu = new Dictionary<string, Dictionary<string, string>>()
             {
-                { "1", new Dictionary<string, string>()
+                { "Pedido", new Dictionary<string, string>()
                     {
                         {"1", "Registar" },
                         {"2", "Alterar" },
@@ -48,23 +46,28 @@ namespace RSGymPT
                         {"5", "Terminar" }
                     }
                 },
-                { "2", new Dictionary<string, string>()
+                { "Personal Trainer", new Dictionary<string, string>()
                     {
-                        {"1", "Pesquisar" },
-                        {"2", "Listar" }
+                        {"6", "Pesquisar" },
+                        {"7", "Listar" }
                     }
                 },
-                { "3", new Dictionary<string, string>()
+                { "Utilizador", new Dictionary<string, string>()
                     {
-                        {"1", "Listar" },
-                        {"2", "Logout" }
+                        {"8", "Listar" },
+                        {"9", "Logout" }
                     }
                 }   
             };
 
-            foreach (KeyValuePair<string, Dictionary<string, string>> item in mainMenu)
+            foreach (KeyValuePair<string, Dictionary<string, string>> menu in mainMenu)
             {
-                RSGymUtility.WriteMessage($"({item.Key}) - {item.Value}", "", "\n");
+                RSGymUtility.WriteTitle($"{menu.Key}", "", "\n");
+
+                foreach (KeyValuePair<string, string> subMenu in menu.Value)
+                {
+                    RSGymUtility.WriteMessage($"({subMenu.Key}) - {subMenu.Value}", "", "\n");
+                }
             }
 
             return mainMenu;
@@ -117,18 +120,18 @@ namespace RSGymPT
             }
             else
             {
-                RSGymUtility.WriteMessage($"{message02.PadLeft(15 - (message02.Length / 2) + message02.Length, ' ')}", "", "\n\n");
+                RSGymUtility.WriteMessage($"{message02.PadLeft(15 - (message02.Length / 2) + message02.Length, ' ')}", "", "\n");
             }
         }
 
         // Get user login choice
-        internal static string GetLoginChoice()
+        internal static string GetChoice(string menu)
         {
             string loginNumber;
             bool status;
             do
             {
-                ShowLoginMenu();
+                GetMenu(menu);
 
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
 
@@ -139,6 +142,18 @@ namespace RSGymPT
             } while (!status);
 
             return loginNumber;
+        }
+
+        internal static void GetMenu(string menu)
+        {
+            if (menu == "login")
+            {
+                ShowLoginMenu();
+            }
+            else
+            {
+                ShowMainMenu();
+            }
         }
 
         // Check if the input is a valid choice
@@ -154,11 +169,33 @@ namespace RSGymPT
                 return action;
             }
 
-            RSGymUtility.WriteMessage($"Escolha um número válido: (1) ou (2).", "\n", "\n");
+            RSGymUtility.WriteMessage($"Escolha um número válido.", "\n", "\n");
 
             RSGymUtility.PauseConsole();
 
             return null;
+        }
+
+        internal static string CheckMainMenuChoice(Dictionary<string, Dictionary<string, string>> mainMenu, string menuKey)
+        {
+            string action = null;
+            bool status = false;
+
+            foreach (KeyValuePair<string, Dictionary<string, string>> menu in mainMenu)
+            {
+                status = menu.Value.TryGetValue(menuKey, out action);
+            }
+
+            if (status)
+            {
+                return action;
+            }
+
+            RSGymUtility.WriteMessage($"Escolha um número válido.", "\n", "\n");
+
+            RSGymUtility.PauseConsole();
+
+            return action;
         }
 
         internal static bool CheckInt(string loginNumber)
@@ -170,3 +207,24 @@ namespace RSGymPT
 
     }
 }
+
+
+/*
+ 
+ Dictionary<string, Dictionary<string, string>> mainMenu = LoginUtility.ShowMainMenu();
+            string menuAction, menuKey;
+
+            do
+            {
+                menuKey = LoginUtility.GetChoice("main");
+                menuAction = LoginUtility.CheckMainMenuChoice(mainMenu, menuKey);
+
+                if (menuAction == "Login")
+                {
+                    Login.LogInUser(users);
+                }
+
+            } while (menuAction != "Sair");
+
+            LoginUtility.ShowLogo("end");
+ */
