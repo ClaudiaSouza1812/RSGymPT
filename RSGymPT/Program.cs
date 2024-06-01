@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Internal;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,24 +17,11 @@ namespace RSGymPT
 
             List<User> users = User.MakeUser();
 
-            LoginUtility.ShowLogo("begin");
+            UserUtility.StartRSGymProgram(users);
 
-            Dictionary<string, string> loginMenu = LoginUtility.ShowLoginMenu();
-            string loginAction, loginKey;
 
-            do
-            {
-                loginKey = LoginUtility.GetChoice("login");
-                loginAction = LoginUtility.CheckLoginChoice(loginMenu, loginKey);
-
-                if (loginAction == "Login")
-                {
-                    Login.LogInUser(users);
-                }
-                
-            } while (loginAction != "Sair");
-
-            LoginUtility.ShowLogo("end");
+            
+            
 
 
             

@@ -7,8 +7,59 @@ using Utility;
 
 namespace RSGymPT
 {
-    internal class LoginUtility
+    internal class UserUtility
     {
+        internal static void StartRSGymProgram(List<User> users)
+        {
+            ShowLogo("begin");
+
+            Dictionary<string, string> loginMenu = ShowLoginMenu();
+            string loginAction, loginKey;
+            bool status;
+
+            do
+            {
+                loginKey = GetChoice("login");
+                loginAction = CheckLoginChoice(loginMenu, loginKey);
+
+                if (loginAction == "Login")
+                {
+                    User.LogInUser(users);
+                    status = true;
+                }
+
+            } while (loginAction != "Sair");
+
+            ShowLogo("end");
+
+            status = false;
+
+            if (status)
+            {
+                Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu();
+                string menuAction, menuKey;
+
+                do
+                {
+                    menuKey = GetChoice("main");
+                    menuAction = CheckMainMenuChoice(mainMenu, menuKey);
+
+                    switch (menuAction)
+                    {
+                        case "Registar":
+                            RSGymUtility.WriteMessage("No caminho certo.");
+                            break;
+                        default:
+                            RSGymUtility.WriteMessage("Escolha um número válido.");
+                            break;
+                    }
+
+                } while (menuAction != "Sair");
+
+                ShowLogo("end");
+            }
+        }
+
         internal static Dictionary<string, string> ShowLoginMenu()
         {
             Console.Clear();
@@ -29,12 +80,13 @@ namespace RSGymPT
             return loginMenu;
         }
 
+
         internal static Dictionary<string, Dictionary<string, string>> ShowMainMenu()
         {
             Console.Clear();
 
             RSGymUtility.WriteTitle("RSGymPT Main Menu", "", "\n\n");
-            
+
             Dictionary<string, Dictionary<string, string>> mainMenu = new Dictionary<string, Dictionary<string, string>>()
             {
                 { "Pedido", new Dictionary<string, string>()
@@ -57,7 +109,7 @@ namespace RSGymPT
                         {"8", "Listar" },
                         {"9", "Logout" }
                     }
-                }   
+                }
             };
 
             foreach (KeyValuePair<string, Dictionary<string, string>> menu in mainMenu)
@@ -124,17 +176,19 @@ namespace RSGymPT
             }
         }
 
-        // Get user login choice
+
+        // Get user choice
         internal static string GetChoice(string menu)
         {
             string loginNumber;
             bool status;
             do
             {
+                Console.Clear();
+
                 GetMenu(menu);
 
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
-
                 loginNumber = Console.ReadLine();
 
                 status = CheckInt(loginNumber);
@@ -143,6 +197,7 @@ namespace RSGymPT
 
             return loginNumber;
         }
+
 
         internal static void GetMenu(string menu)
         {
@@ -155,6 +210,7 @@ namespace RSGymPT
                 ShowMainMenu();
             }
         }
+
 
         // Check if the input is a valid choice
         internal static string CheckLoginChoice(Dictionary<string, string> loginMenu, string key)
@@ -208,23 +264,8 @@ namespace RSGymPT
     }
 }
 
-
 /*
  
- Dictionary<string, Dictionary<string, string>> mainMenu = LoginUtility.ShowMainMenu();
-            string menuAction, menuKey;
-
-            do
-            {
-                menuKey = LoginUtility.GetChoice("main");
-                menuAction = LoginUtility.CheckMainMenuChoice(mainMenu, menuKey);
-
-                if (menuAction == "Login")
-                {
-                    Login.LogInUser(users);
-                }
-
-            } while (menuAction != "Sair");
-
-            LoginUtility.ShowLogo("end");
+ 
  */
+

@@ -123,6 +123,92 @@ namespace RSGymPT
         }
 
 
+        internal static void LogInUser(List<User> users)
+        {
+            string userName = AskUserName();
+
+            bool validUser = CheckUserName(users, userName);
+
+            bool validPassword = false;
+
+            if (validUser)
+            {
+
+                string password = AskUserPassword(users);
+
+                validPassword = CheckUserPassword(users, password);
+            }
+
+            if (validPassword)
+            {
+                UserUtility.GetChoice("main");
+            }
+        }
+
+        internal static string AskUserName()
+        {
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("Login", "", "\n\n");
+
+            RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
+
+            string userName = Console.ReadLine().ToLower();
+
+            return userName;
+        }
+
+
+        internal static bool CheckUserName(List<User> users, string userName)
+        {
+            foreach (User user in users)
+            {
+                if (user.UserName == userName)
+                {
+                    //UserName = userName;
+
+                    return true;
+                }
+            }
+
+            RSGymUtility.WriteMessage("Nome de utilizador inválido.", "", "\n");
+
+            RSGymUtility.PauseConsole();
+
+            return false;
+        }
+
+
+        internal static string AskUserPassword(List<User> users)
+        {
+            RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
+
+            string password = Console.ReadLine().ToLower();
+
+            return password;
+
+        }
+
+        internal static bool CheckUserPassword(List<User> users, string password)
+        {
+            foreach (User user in users)
+            {
+                if (user.Password == password)
+                {
+                    //Password = password;
+
+                    return true;
+                }
+            }
+
+            RSGymUtility.WriteMessage("Palavra-passe inválida.", "", "\n");
+
+            RSGymUtility.PauseConsole();
+
+            return false;
+        }
+
+
         internal static void ListUser(List<User> list) 
         {
             RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
