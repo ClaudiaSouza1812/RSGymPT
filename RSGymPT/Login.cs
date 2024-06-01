@@ -69,8 +69,8 @@ namespace RSGymPT
         internal string Operators { get; set; } // Todo MRS: propriedade no singular
         */
 
-        internal string UserName { get; set; }
-        internal string Password { get; set; }
+        internal static string UserName { get; set; }
+        internal static string Password { get; set; }
         #endregion
 
         #region Classic properties 1.0 (use field)
@@ -141,7 +141,13 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        
+        internal static void LogInUser(List<User> users)
+        {
+            string userName = AskUserName();
+
+            CheckUserName(users, userName);
+
+        }
 
         internal static string AskUserName()
         {
@@ -151,66 +157,53 @@ namespace RSGymPT
 
             RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
 
-            string userName = Console.ReadLine();
+            string userName = Console.ReadLine().ToLower();
             
             return userName;
         }
 
-        /*
-        internal static string CheckUserName(string userName)
+        
+        internal static void CheckUserName(List<User> users, string userName)
         {
-            if (userName.Length != 5)
+            foreach (User item in users)
             {
-                RSGymUtility.WriteMessage("O nome de utilizador deve ter cinco (5) caracteres.", "", "\n");
+                if (item.UserName == userName)
+                {
+                    UserName = userName;
 
-                AskUserName();
+                    AskUserPassword(users);
+                }
             }
-            else
-            {
-                user.UserName = userName;
 
-                AskUserPassword(user);
-            }
+            RSGymUtility.WriteMessage("Nome de utilizador inválido.", "", "\n");
         }
-        */
-        internal static void AskUserPassword(User user)
+        
+
+        internal static void AskUserPassword(List<User> users)
         {
             RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
 
             string password = Console.ReadLine();
 
-            CheckUserPassword(user, password);
+            CheckUserPassword(users, password);
         }
 
-        internal static void CheckUserPassword(User user, string password)
+        internal static void CheckUserPassword(List<User> users, string password)
         {
-            if (password.Length < 8 || password.Length > 16)
+            foreach (User item in users)
             {
-                RSGymUtility.WriteMessage("A palavra-passe deve ter no mínimo oito (8) caracteres e não deve exceder dezesseis (16) caracteres.", "", "\n");
+                if (item.Password == password)
+                {
+                    Password = password;
+                    LoginUtility.ShowMainMenu();
+                }
+            }
 
-                AskUserPassword(user);
-            }
-            else
-            {
-                user.Password = password;
-                return;
-            }
+            RSGymUtility.WriteMessage("A palavra-passe deve ter no mínimo oito (8) caracteres e não deve exceder dezesseis (16) caracteres.", "", "\n");
         }
 
         
-        internal static void LogInUser()
-        {
-
-            
-
-            User user = new User();
-            string userName;
-
-            userName = AskUserName();
-
-            //CheckUserName(userName);
-
-        }
+        
         
         #endregion
 

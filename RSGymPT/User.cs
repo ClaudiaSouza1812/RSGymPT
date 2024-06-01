@@ -102,7 +102,7 @@ namespace RSGymPT
         #region Methods (public or internal)
 
         // Metodo para criar utilizadores fictícios.
-        internal static void MakeUser()
+        internal static List<User> MakeUser()
         {
             List<User> users = new List<User>(); 
 
@@ -118,6 +118,8 @@ namespace RSGymPT
             User user02 = new User("Paula de Fátima Vallim Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321");
 
             users.Add(user02);
+
+            return users;
         }
 
 

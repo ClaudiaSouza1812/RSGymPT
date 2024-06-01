@@ -9,11 +9,11 @@ namespace RSGymPT
 {
     internal class LoginUtility
     {
-        internal static Dictionary<string, string> ShowRsgymMenu()
+        internal static Dictionary<string, string> ShowLoginMenu()
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("RSGymPT Menu", "", "\n\n");
+            RSGymUtility.WriteTitle("Login RSGymPT Menu", "", "\n\n");
             RSGymUtility.WriteMessage("Escolha o número de uma das seguintes opções: ", endMessage: "\n\n");
 
             Dictionary<string, string> loginMenu = new Dictionary<string, string>()
@@ -29,6 +29,47 @@ namespace RSGymPT
 
             return loginMenu;
         }
+
+        internal static Dictionary<string, Dictionary<string, string>> ShowMainMenu()
+        {
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("Main RSGymPT Menu", "", "\n\n");
+            RSGymUtility.WriteMessage("Escolha o número do menu e do submenu: ", endMessage: "\n\n");
+
+            Dictionary<string, Dictionary<string, string>> mainMenu = new Dictionary<string, Dictionary<string, string>>()
+            {
+                { "1", new Dictionary<string, string>()
+                    {
+                        {"1", "Registar" },
+                        {"2", "Alterar" },
+                        {"3", "Eliminar" },
+                        {"4", "Listar" },
+                        {"5", "Terminar" }
+                    }
+                },
+                { "2", new Dictionary<string, string>()
+                    {
+                        {"1", "Pesquisar" },
+                        {"2", "Listar" }
+                    }
+                },
+                { "3", new Dictionary<string, string>()
+                    {
+                        {"1", "Listar" },
+                        {"2", "Logout" }
+                    }
+                }   
+            };
+
+            foreach (KeyValuePair<string, Dictionary<string, string>> item in mainMenu)
+            {
+                RSGymUtility.WriteMessage($"({item.Key}) - {item.Value}", "", "\n");
+            }
+
+            return mainMenu;
+        }
+
 
         // Show RSGymPT logo
         internal static void ShowLogo(string status)
@@ -87,7 +128,7 @@ namespace RSGymPT
             bool status;
             do
             {
-                ShowRsgymMenu();
+                ShowLoginMenu();
 
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
 

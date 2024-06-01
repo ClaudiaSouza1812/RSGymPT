@@ -14,21 +14,21 @@ namespace RSGymPT
             // Method to output characters encoded to UTF-8 
             RSGymUtility.SetUnicodeConsole();
 
-            User.MakeUser();
+            List<User> users = User.MakeUser();
 
             LoginUtility.ShowLogo("begin");
 
-            Dictionary<string, string> rsgymMenu = LoginUtility.ShowRsgymMenu();
+            Dictionary<string, string> loginMenu = LoginUtility.ShowLoginMenu();
             string action, key;
 
             do
             {
                 key = LoginUtility.GetLoginChoice();
-                action = LoginUtility.CheckLoginChoice(rsgymMenu, key);
+                action = LoginUtility.CheckLoginChoice(loginMenu, key);
 
                 if (action == "Login")
                 {
-                    Login.LogInUser();
+                    Login.LogInUser(users);
                 }
                 
             } while (action != "Sair");
