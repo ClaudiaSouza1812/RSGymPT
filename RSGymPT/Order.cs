@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Utility;
 
 namespace RSGymPT
 {
@@ -23,8 +24,8 @@ namespace RSGymPT
         internal string Operator { get; set; } // propriedade no singular
         */
 
-        internal int Id { get; }
-        internal static int NextId { get; set; } = 1;
+        internal int OrderId { get; }
+        internal int NextId { get; set; } = 1;
         internal int UserId { get; }
         internal string PtCode { get; }
         internal DateTime TrainingDateTime { get; set; }
@@ -61,28 +62,37 @@ namespace RSGymPT
         #region Constructors (public or internal)
         // Fazer substituto do default constructor
 
-        internal User()
+        internal Order()
         {
-            Id = NextId++;
-            Name = string.Empty;
-            Birth = DateTime.MinValue;
-            UserName = string.Empty;
-            Password = string.Empty;
+            OrderId = NextId++;
+            UserId = 0;
+            PtCode = string.Empty;
+            TrainingDateTime = DateTime.Now;
+            OrderStatus = string.Empty;
         }
         // Fazer segundo construtor com inserção parâmetros obrigatórios
 
-        internal User(string name, DateTime birth, string userName, string password)
+        internal Order(int userId, string ptCode, DateTime trainingDateTime,  string orderStatus)
         {
-            Id = NextId++;
-            Name = name;
-            Birth = birth;
-            UserName = userName;
-            Password = password;
+            OrderId = NextId++;
+            UserId = userId;
+            PtCode = ptCode;
+            TrainingDateTime = trainingDateTime;
+            OrderStatus = orderStatus;
         }
         #endregion
 
 
         #region Methods (public or internal)
+
+        
+        internal void AksOrder() 
+        {
+            RSGymUtility.WriteTitle("Registar pedido", "", "\n\n");
+
+            RSGymUtility.WriteMessage("Digite o código do Personal Trainer ", "", "\n");
+        }
+
 
         #endregion  
     }

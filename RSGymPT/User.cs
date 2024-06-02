@@ -41,8 +41,8 @@ namespace RSGymPT
         internal string Operator { get; set; } // propriedade no singular
         */
 
-        internal int Id { get; }
-        internal static int NextId { get; set; } = 1;
+        internal int UserId { get; }
+        internal int NextId { get; set; } = 1;
         internal string Name { get; set; }
         internal DateTime Birth { get; set; }
         internal string UserName { get; set; }
@@ -81,7 +81,7 @@ namespace RSGymPT
 
         internal User()
         {
-            Id = NextId++;
+            UserId = NextId++;
             Name = string.Empty;
             Birth = DateTime.MinValue;
             UserName = string.Empty;
@@ -91,7 +91,7 @@ namespace RSGymPT
 
         internal User(string name, DateTime birth, string userName, string password)
         {
-            Id = NextId++;
+            UserId = NextId++;
             Name = name;
             Birth = birth;
             UserName = userName;
@@ -102,7 +102,7 @@ namespace RSGymPT
         #region Methods (public or internal)
 
         // Method to create fictitious users
-        internal static List<User> MakeUser()
+        internal static List<User> CreateUser()
         {
             List<User> users = new List<User>(); 
 

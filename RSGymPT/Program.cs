@@ -15,9 +15,10 @@ namespace RSGymPT
             // Method to output characters encoded to UTF-8 
             RSGymUtility.SetUnicodeConsole();
 
-            List<User> users = User.MakeUser();
+            List<User> users = User.CreateUser();
+            List<PersonalTrainer> personalTrainers = PersonalTrainer.CreatePersonalTrainer();
 
-            UserUtility.StartRSGymProgram(users);
+            UserUtility.StartRSGymProgram(users, personalTrainers);
 
 
             
