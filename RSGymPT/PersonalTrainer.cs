@@ -28,7 +28,7 @@ namespace RSGymPT
         internal string FullName { get; set; }
         internal string CellPhone { get; set; }
         internal string PtCode { get; set; }
-        
+
         #endregion
 
         #region Classic properties 1.0
@@ -99,10 +99,6 @@ namespace RSGymPT
 
         internal static string AskPtCode()
         {
-            Console.Clear();
-
-            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer", "", "\n\n");
-
             RSGymUtility.WriteMessage("Digite o código do PT: ");
 
             string ptCode = Console.ReadLine();
@@ -111,23 +107,36 @@ namespace RSGymPT
 
         }
 
-        internal static bool CheckPtCode(List<PersonalTrainer> personalTrainers, string ptCode)
+        internal static PersonalTrainer FindCode(List<PersonalTrainer> personalTrainers) 
         {
+            string ptCode = AskPtCode().ToUpper();
+
             foreach (PersonalTrainer ptrainer in personalTrainers)
             {
                 if (ptrainer.PtCode == ptCode)
                 {
-                    //UserName = userName;
-
-                    return true;
+                    return ptrainer;
                 }
             }
+            return null;
+        }
 
-            RSGymUtility.WriteMessage("Código inexistente.", "", "\n");
+        internal static void FindPersonalTrainer(List<PersonalTrainer> personalTrainers)
+        {
+            Console.Clear();
 
-            RSGymUtility.PauseConsole();
+            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer", "", "\n\n");
 
-            return false;
+            PersonalTrainer personalTrainer = FindCode(personalTrainers);
+
+            if (personalTrainer != null)
+            {
+                RSGymUtility.WriteMessage($"O código {personalTrainer.PtCode} pertence ao Personal Trainer: \nNome: {personalTrainer.FullName}\nTelemóvel: {personalTrainer.CellPhone}", "\n", "\n");
+            }
+            else
+            {
+                RSGymUtility.WriteMessage("Código inexistente.", "", "\n");
+            }
         }
 
         #endregion

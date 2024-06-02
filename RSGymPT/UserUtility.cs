@@ -56,10 +56,9 @@ namespace RSGymPT
                                 case "Registar":
                                     do
                                     {
-                                        Order order = new Order();
-                                        order.AksOrder();
+                                        Order.AddOrder(personalTrainers);
 
-                                    } while (true);
+                                    } while (KeepGoing() == "s");
                                     break;
                                 case "Alterar":
                                     break;
@@ -78,16 +77,12 @@ namespace RSGymPT
                             switch (menuAction[1])
                             {
                                 case "Pesquisar":
-                                    bool isValid;
                                     do
                                     {
-                                        string ptCode = PersonalTrainer.AskPtCode();
+                                        PersonalTrainer.FindPersonalTrainer(personalTrainers);
 
-                                        isValid = PersonalTrainer.CheckPtCode(personalTrainers, ptCode);
-
-                                    } while (!status);
+                                    } while (KeepGoing() == "s");
                                     break;
-
                                 case "Listar":
                                     break;
                                 default:
@@ -96,15 +91,13 @@ namespace RSGymPT
                             }
                             break;
                         case "Utilizador":
-                            switch (menuAction[1])
+                            if (menuAction[1] == "Listar")
                             {
-                                case "Listar":
-                                    break;
-                                case "Logout":
-                                    break;
-                                default:
-                                    RSGymUtility.WriteMessage("Escolha um número válido.");
-                                    break;
+                                
+                            }
+                            else
+                            {
+                                RSGymUtility.WriteMessage("Escolha um número válido.");
                             }
                             break;
                     }
@@ -115,6 +108,15 @@ namespace RSGymPT
         }
 
 
+        internal static string KeepGoing()
+        {
+            string answer;
+
+            RSGymUtility.WriteMessage("Continuar? (s/n): ", "\n");
+            answer = Console.ReadLine().ToLower();
+
+            return answer;
+        }
 
 
 

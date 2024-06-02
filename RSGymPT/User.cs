@@ -122,9 +122,11 @@ namespace RSGymPT
             return users;
         }
 
-
-        internal static bool LogInUser(List<User> users)
+        // Parei Aqui, retornar o usuário
+        internal static User LogInUser(List<User> users)
         {
+            User user = new User();
+
             string userName = AskUserName();
 
             bool isValidUser = CheckUserName(users, userName);
@@ -141,6 +143,7 @@ namespace RSGymPT
             if (isValidPassword)
             {
                 return true;
+                
             }
 
             return false;
@@ -214,9 +217,9 @@ namespace RSGymPT
         {
             RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
 
-            foreach (User item in list)
+            foreach (User user in list)
             {
-                RSGymUtility.WriteMessage($"Id: {item.Id}\nNome: {item.Name}\nData de nascimento: {item.Birth.ToShortDateString()}", "", "\n\n");
+                RSGymUtility.WriteMessage($"Id: {user.UserId}\nNome: {user.Name}\nData de nascimento: {user.Birth.ToShortDateString()}", "", "\n\n");
             }
         }
 

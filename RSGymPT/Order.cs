@@ -85,7 +85,20 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        
+        // Parei aqui, preciso receber o usuário
+        internal static void AddOrder(List<PersonalTrainer> personalTrainers)
+        {
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("Registar Pedido de um Personal Trainer", "\n", "\n\n");
+
+            Order order = new Order();
+
+            PersonalTrainer personalTrainer = PersonalTrainer.FindCode(personalTrainers);
+
+
+        }
+
         internal void AksOrder() 
         {
             RSGymUtility.WriteTitle("Registar pedido", "", "\n\n");
