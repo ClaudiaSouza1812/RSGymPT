@@ -15,7 +15,7 @@ namespace RSGymPT
 
             Dictionary<string, string> loginMenu = ShowLoginMenu();
             string loginAction, loginKey;
-            bool status;
+            bool status = false;
 
             do
             {
@@ -24,15 +24,18 @@ namespace RSGymPT
 
                 if (loginAction == "Login")
                 {
-                    User.LogInUser(users);
-                    status = true;
+                    status = User.LogInUser(users);
                 }
 
-            } while (loginAction != "Sair");
+            } while (loginAction != "Sair" && status != true);
 
-            ShowLogo("end");
-
-            status = false;
+            if (!status)
+            {
+                ShowLogo("end");
+                RSGymUtility.TerminateConsole();
+                return;
+            }
+            
 
             if (status)
             {
@@ -54,11 +57,12 @@ namespace RSGymPT
                             break;
                     }
 
-                } while (menuAction != "Sair");
+                } while (menuAction != "Logout");
 
                 ShowLogo("end");
             }
         }
+
 
         internal static Dictionary<string, string> ShowLoginMenu()
         {
@@ -126,57 +130,6 @@ namespace RSGymPT
         }
 
 
-        // Show RSGymPT logo
-        internal static void ShowLogo(string status)
-        {
-            Console.Clear();
-
-            RSGymUtility.WriteTitle("RSGymPT APP", "", "\n\n");
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-
-            string[] logo =
-            {
-                "-------------------------------",
-                "|  _____    _____   ___       |",
-                "| | |   |  |  ___| | _/|      |",
-                "| | |___|  | |___  |___|      |",
-                "| | |\\\\    |___  |  | |       |",
-                "| | | \\\\    ___| |  | |´ ' `\\ |",
-                "| |_|  \\\\  |_____|  |_______/ |",
-                "|                             |",
-                "-------------------------------"
-            };
-
-            foreach (string item in logo)
-            {
-                RSGymUtility.WriteMessage($"{item}\n");
-            }
-
-            ShowLogoMessage(status);
-
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
-        // Show RSGymPT logo message
-        internal static void ShowLogoMessage(string status)
-        {
-            string message01 = "Bem vindo! Vamos treinar?";
-            string message02 = "Até a próxima!";
-
-            if (status == "begin")
-            {
-                RSGymUtility.WriteMessage($"{message01.PadLeft(15 - (message01.Length / 2) + message01.Length, ' ')}", "", "\n\n");
-
-                RSGymUtility.PauseConsole();
-            }
-            else
-            {
-                RSGymUtility.WriteMessage($"{message02.PadLeft(15 - (message02.Length / 2) + message02.Length, ' ')}", "", "\n");
-            }
-        }
-
-
         // Get user choice
         internal static string GetChoice(string menu)
         {
@@ -240,13 +193,14 @@ namespace RSGymPT
             foreach (KeyValuePair<string, Dictionary<string, string>> menu in mainMenu)
             {
                 status = menu.Value.TryGetValue(menuKey, out action);
+
+                if (status)
+                {
+                    return action;
+                }
             }
 
-            if (status)
-            {
-                return action;
-            }
-
+            
             RSGymUtility.WriteMessage($"Escolha um número válido.", "\n", "\n");
 
             RSGymUtility.PauseConsole();
@@ -261,11 +215,58 @@ namespace RSGymPT
         }
 
 
+        // Show RSGymPT logo
+        internal static void ShowLogo(string status)
+        {
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("RSGymPT APP", "", "\n\n");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            string[] logo =
+            {
+                "-------------------------------",
+                "|  _____    _____   ___       |",
+                "| | |   |  |  ___| | _/|      |",
+                "| | |___|  | |___  |___|      |",
+                "| | |\\\\    |___  |  | |       |",
+                "| | | \\\\    ___| |  | |´ ' `\\ |",
+                "| |_|  \\\\  |_____|  |_______/ |",
+                "|                             |",
+                "-------------------------------"
+            };
+
+            foreach (string item in logo)
+            {
+                RSGymUtility.WriteMessage($"{item}\n");
+            }
+
+            ShowLogoMessage(status);
+
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        // Show RSGymPT logo message
+        internal static void ShowLogoMessage(string status)
+        {
+            string message01 = "Bem vindo! Vamos treinar?";
+            string message02 = "Até a próxima!";
+
+            if (status == "begin")
+            {
+                RSGymUtility.WriteMessage($"{message01.PadLeft(15 - (message01.Length / 2) + message01.Length, ' ')}", "", "\n\n");
+
+                RSGymUtility.PauseConsole();
+            }
+            else
+            {
+                RSGymUtility.WriteMessage($"{message02.PadLeft(15 - (message02.Length / 2) + message02.Length, ' ')}", "", "\n");
+            }
+        }
+
     }
 }
 
-/*
- 
- 
- */
+
 

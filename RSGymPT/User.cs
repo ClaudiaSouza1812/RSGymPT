@@ -101,7 +101,7 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        // Metodo para criar utilizadores fictícios.
+        // Method to create fictitious users
         internal static List<User> MakeUser()
         {
             List<User> users = new List<User>(); 
@@ -123,26 +123,27 @@ namespace RSGymPT
         }
 
 
-        internal static void LogInUser(List<User> users)
+        internal static bool LogInUser(List<User> users)
         {
             string userName = AskUserName();
 
-            bool validUser = CheckUserName(users, userName);
+            bool isValidUser = CheckUserName(users, userName);
 
-            bool validPassword = false;
+            bool isValidPassword = false;
 
-            if (validUser)
+            if (isValidUser)
             {
-
                 string password = AskUserPassword(users);
 
-                validPassword = CheckUserPassword(users, password);
+                isValidPassword = CheckUserPassword(users, password);
             }
 
-            if (validPassword)
+            if (isValidPassword)
             {
-                UserUtility.GetChoice("main");
+                return true;
             }
+
+            return false;
         }
 
         internal static string AskUserName()
