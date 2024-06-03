@@ -15,7 +15,7 @@ namespace RSGymPT
 
             Dictionary<string, string> loginMenu = ShowLoginMenu();
             string loginAction, loginKey;
-            bool status = false;
+            User user = new User();
 
             do
             {
@@ -24,12 +24,12 @@ namespace RSGymPT
 
                 if (loginAction == "Login")
                 {
-                    status = User.LogInUser(users);
+                    user = User.LogInUser(users);
                 }
 
-            } while (loginAction != "Sair" && status != true);
+            } while (loginAction != "Sair" && user == null);
 
-            if (!status)
+            if (loginAction == "Sair")
             {
                 ShowLogo("end");
                 RSGymUtility.TerminateConsole();
@@ -37,74 +37,73 @@ namespace RSGymPT
             }
             
 
-            if (status)
+            
+            Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu();
+            string menuKey;
+            string[] menuAction;
+
+            do
             {
-                Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu();
-                string menuKey;
-                string[] menuAction;
+                menuKey = GetChoice("main");
+                menuAction = CheckMainMenuChoice(mainMenu, menuKey);
 
-                do
+                switch (menuAction[0])
                 {
-                    menuKey = GetChoice("main");
-                    menuAction = CheckMainMenuChoice(mainMenu, menuKey);
+                    case "Pedido":
+                        switch (menuAction[1]) 
+                        {
+                            case "Registar":
+                                do
+                                {
+                                    Order.AddOrder(personalTrainers, user);
 
-                    switch (menuAction[0])
-                    {
-                        case "Pedido":
-                            switch (menuAction[1]) 
-                            {
-                                case "Registar":
-                                    do
-                                    {
-                                        Order.AddOrder(personalTrainers);
-
-                                    } while (KeepGoing() == "s");
-                                    break;
-                                case "Alterar":
-                                    break;
-                                case "Eliminar":
-                                    break;
-                                case "Listar":
-                                    break;
-                                case "Terminar":
-                                    break;
-                                default:
-                                    RSGymUtility.WriteMessage("Escolha um número válido.");
-                                    break;
-                            }
-                            break;
-                        case "Personal Trainer":
-                            switch (menuAction[1])
-                            {
-                                case "Pesquisar":
-                                    do
-                                    {
-                                        PersonalTrainer.FindPersonalTrainer(personalTrainers);
-
-                                    } while (KeepGoing() == "s");
-                                    break;
-                                case "Listar":
-                                    break;
-                                default:
-                                    RSGymUtility.WriteMessage("Escolha um número válido.");
-                                    break;
-                            }
-                            break;
-                        case "Utilizador":
-                            if (menuAction[1] == "Listar")
-                            {
-                                
-                            }
-                            else
-                            {
+                                } while (KeepGoing() == "s");
+                                break;
+                            case "Alterar":
+                                break;
+                            case "Eliminar":
+                                break;
+                            case "Listar":
+                                break;
+                            case "Terminar":
+                                break;
+                            default:
                                 RSGymUtility.WriteMessage("Escolha um número válido.");
-                            }
-                            break;
-                    }
-                } while (menuAction[1] != "Logout");
+                                break;
+                        }
+                        break;
+                    case "Personal Trainer":
+                        switch (menuAction[1])
+                        {
+                            case "Pesquisar":
+                                do
+                                {
+                                    PersonalTrainer.FindPersonalTrainer(personalTrainers);
 
-                ShowLogo("end");
-            }
+                                } while (KeepGoing() == "s");
+                                break;
+                            case "Listar":
+                                break;
+                            default:
+                                RSGymUtility.WriteMessage("Escolha um número válido.");
+                                break;
+                        }
+                        break;
+                    case "Utilizador":
+                        if (menuAction[1] == "Listar")
+                        {
+                                
+                        }
+                        else
+                        {
+                            RSGymUtility.WriteMessage("Escolha um número válido.");
+                        }
+                        break;
+                }
+            } while (menuAction[1] != "Logout");
+
+            ShowLogo("end");
+            
         }
 
 

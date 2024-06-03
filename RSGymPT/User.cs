@@ -122,7 +122,17 @@ namespace RSGymPT
             return users;
         }
 
-        // Parei Aqui, retornar o usuário
+
+        /*internal string EncryptPassword(string password)
+        {
+            using (SHA256Managed sha256 = new SHA256Managed())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            };
+            
+        }*/
+
         internal static User LogInUser(List<User> users)
         {
             User user = new User();
@@ -131,22 +141,16 @@ namespace RSGymPT
 
             bool isValidUser = CheckUserName(users, userName);
 
-            bool isValidPassword = false;
-
             if (isValidUser)
             {
-                string password = AskUserPassword(users);
+                string password = AskUserPassword();
 
-                isValidPassword = CheckUserPassword(users, password);
+                user = CheckUserPassword(users, password);
+
+                return user;
             }
 
-            if (isValidPassword)
-            {
-                return true;
-                
-            }
-
-            return false;
+            return null;
         }
 
         internal static string AskUserName()
@@ -183,7 +187,7 @@ namespace RSGymPT
         }
 
 
-        internal static string AskUserPassword(List<User> users)
+        internal static string AskUserPassword()
         {
             RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
 
@@ -193,15 +197,13 @@ namespace RSGymPT
 
         }
 
-        internal static bool CheckUserPassword(List<User> users, string password)
+        internal static User CheckUserPassword(List<User> users, string password)
         {
             foreach (User user in users)
             {
                 if (user.Password == password)
                 {
-                    //Password = password;
-
-                    return true;
+                    return user;
                 }
             }
 
@@ -209,7 +211,7 @@ namespace RSGymPT
 
             RSGymUtility.PauseConsole();
 
-            return false;
+            return null;
         }
 
 

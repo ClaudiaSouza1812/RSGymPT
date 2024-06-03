@@ -99,7 +99,7 @@ namespace RSGymPT
 
         internal static string AskPtCode()
         {
-            RSGymUtility.WriteMessage("Digite o código do PT: ");
+            RSGymUtility.WriteMessage("Digite o código do PT: ", "", "\n");
 
             string ptCode = Console.ReadLine();
 
