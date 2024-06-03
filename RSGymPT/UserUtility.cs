@@ -59,12 +59,17 @@ namespace RSGymPT
 
                                 } while (KeepGoing() == "s");
                                 break;
+
                             case "Alterar":
                                 break;
+
                             case "Eliminar":
                                 break;
+
                             case "Listar":
+                                Order.ListOrdersByUser(user);
                                 break;
+
                             case "Terminar":
                                 break;
                             default:

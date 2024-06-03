@@ -177,6 +177,8 @@ namespace RSGymPT
 
         }
 
+        #endregion
+
         internal static bool SetOrderStatus(DateTime dateTime, string ptCode)
         {
             foreach (Order order in orders)
@@ -188,6 +190,24 @@ namespace RSGymPT
             }
             return true;
         }
-        #endregion  
+
+        internal static void ListOrdersByUser(User user)
+        {
+            bool haveOrder = false;
+
+            foreach (Order order in orders)
+            {
+                if (user.UserId == order.UserId)
+                {
+                    RSGymUtility.WriteMessage($"Pedido: {order.OrderId}, PT: {order.PtCode}, Data e hora da sessão: {order.TrainingDateTime}, Estado: {order.OrderStatus}.", "", "\n\n");
+                    haveOrder = true;
+                }
+            }
+
+            if (!haveOrder) 
+            {
+                RSGymUtility.WriteMessage($"{user.Name}, você ainda não tem sessões agendadas.", "", "\n\n");
+            }
+        }
     }
 }
