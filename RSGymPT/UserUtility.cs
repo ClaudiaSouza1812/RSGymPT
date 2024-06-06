@@ -9,37 +9,53 @@ namespace RSGymPT
 {
     internal class UserUtility
     {
-        internal static void StartRSGymProgram(List<User> users, List<PersonalTrainer> personalTrainers)
+        internal static void StartRSGymProgram()
         {
+            // Show RSGymPT logo
             ShowLogo("begin");
 
+            // Show the login menu
             Dictionary<string, string> loginMenu = ShowLoginMenu();
-            string loginAction, loginKey;
+
+            // Create inicial 2 users
+            List<User> users = User.CreateUser();
+
+            // Create initial 3 PTs
+            List<PersonalTrainer> personalTrainers = PersonalTrainer.CreatePersonalTrainer();
+
+            // Create a new user
             User user = new User();
+
+            // Create a new PT
+            PersonalTrainer personalTrainer = new PersonalTrainer();
+
+            string loginAction;
+            int loginKey;
 
             do
             {
                 loginKey = GetChoice("login");
                 loginAction = CheckLoginChoice(loginMenu, loginKey);
 
+                if (loginAction == "Sair")
+                {
+                    ShowLogo("end");
+                    RSGymUtility.TerminateConsole();
+                    return;
+                }
+
                 if (loginAction == "Login")
                 {
                     user = User.LogInUser(users);
                 }
 
-            } while (loginAction != "Sair" && user == null);
-
-            if (loginAction == "Sair")
-            {
-                ShowLogo("end");
-                RSGymUtility.TerminateConsole();
-                return;
-            }
-            
+            } while (loginAction != "Sair" && (user.Name == "" || user == null);
 
             
+            
+
             Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu();
-            string menuKey;
+            int menuKey;
             string[] menuAction;
 
             do
@@ -190,10 +206,10 @@ namespace RSGymPT
         }
 
 
-        // Get user choice
-        internal static string GetChoice(string menu)
+        // Get user choice to each menu
+        internal static int GetChoice(string menu)
         {
-            string loginNumber;
+            int loginNumber;
             bool status;
             do
             {
@@ -202,9 +218,14 @@ namespace RSGymPT
                 GetMenu(menu);
 
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
-                loginNumber = Console.ReadLine();
+                string answer = Console.ReadLine();
 
-                status = CheckInt(loginNumber);
+                status = int.TryParse(answer, out loginNumber);
+
+                if (!status)
+                {
+                    RSGymUtility.WriteMessage("Digite um número válido.", "\n");
+                }
 
             } while (!status);
 
@@ -226,12 +247,12 @@ namespace RSGymPT
 
 
         // Check if the input is a valid choice
-        internal static string CheckLoginChoice(Dictionary<string, string> loginMenu, string key)
+        internal static string CheckLoginChoice(Dictionary<string, string> loginMenu, int key)
         {
             string action;
             bool status;
 
-            status = loginMenu.TryGetValue(key, out action);
+            status = loginMenu.TryGetValue(key.ToString(), out action);
 
             if (status)
             {
@@ -242,10 +263,10 @@ namespace RSGymPT
 
             RSGymUtility.PauseConsole();
 
-            return null;
+            return string.Empty;
         }
 
-        internal static string[] CheckMainMenuChoice(Dictionary<string, Dictionary<string, string>> mainMenu, string menuKey)
+        internal static string[] CheckMainMenuChoice(Dictionary<string, Dictionary<string, string>> mainMenu, int menuKey)
         {
             string[] menuSubmenu = new string[2];
             string action = null;
@@ -253,7 +274,7 @@ namespace RSGymPT
 
             foreach (KeyValuePair<string, Dictionary<string, string>> menu in mainMenu)
             {
-                status = menu.Value.TryGetValue(menuKey, out action);
+                status = menu.Value.TryGetValue(menuKey.ToString(), out action);
 
                 if (status)
                 {
@@ -270,12 +291,6 @@ namespace RSGymPT
             RSGymUtility.PauseConsole();
 
             return null;
-        }
-
-        internal static bool CheckInt(string loginNumber)
-        {
-            bool status = int.TryParse(loginNumber, out int number);
-            return status;
         }
 
 

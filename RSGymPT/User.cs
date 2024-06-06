@@ -101,23 +101,14 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        // Method to create fictitious users
+        // Method to create 2 initial users
         internal static List<User> CreateUser()
         {
-            List<User> users = new List<User>(); 
-
-            User user01 = new User();
-
-            user01.Name = "Claudia Simone de Souza";
-            user01.Birth = new DateTime(1992, 12, 18);
-            user01.UserName = "clasi";
-            user01.Password = "12345678";
-
-            users.Add(user01);
-
-            User user02 = new User("Paula de Fátima Vallim Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321");
-
-            users.Add(user02);
+            List<User> users = new List<User>()
+            {
+                new User("Claudia Simone de Souza", new DateTime(1992, 12, 18), "clasi", "12345678"),
+                new User("Paula de Fátima Vallim Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321")
+            };
 
             return users;
         }

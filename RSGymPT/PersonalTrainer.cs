@@ -84,16 +84,12 @@ namespace RSGymPT
         // Method to create fictitious users
         internal static List<PersonalTrainer> CreatePersonalTrainer()
         {
-            List<PersonalTrainer> personalTrainers = new List<PersonalTrainer>();
-
-            PersonalTrainer personalTrainer01 = new PersonalTrainer("Eduardo Cabrita", "999888777", "PT001");
-            PersonalTrainer personalTrainer02 = new PersonalTrainer("Perseu Antunes", "999777666", "PT002");
-            PersonalTrainer personalTrainer03 = new PersonalTrainer("Klaus Ofner", "999777666", "PT003");
-
-            personalTrainers.Add(personalTrainer01);
-            personalTrainers.Add(personalTrainer02);
-            personalTrainers.Add(personalTrainer03);
-
+            List<PersonalTrainer> personalTrainers = new List<PersonalTrainer>()
+            {
+                new PersonalTrainer("Eduardo Cabrita", "999888777", "PT001"),
+                new PersonalTrainer("Perseu Antunes", "999777666", "PT002"),
+                new PersonalTrainer("Klaus Ofner", "999777666", "PT003")
+        };
             return personalTrainers;
         }
 
