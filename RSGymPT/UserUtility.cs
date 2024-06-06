@@ -25,6 +25,7 @@ namespace RSGymPT
 
             // Create a new user
             User user = new User();
+            user = null;
 
             // Create a new PT
             PersonalTrainer personalTrainer = new PersonalTrainer();
@@ -49,7 +50,7 @@ namespace RSGymPT
                     user = User.LogInUser(users);
                 }
 
-            } while (loginAction != "Sair" && (user.Name == "" || user == null));
+            } while (loginAction != "Sair" && user == null);
 
             
             
@@ -207,29 +208,29 @@ namespace RSGymPT
 
 
         // Get user choice to each menu
-        internal static int GetChoice(string menu)
+        internal static int GetChoice(string chosenMenu)
         {
-            int loginNumber;
+            int menuNumber;
             bool status;
             do
             {
                 Console.Clear();
 
-                GetMenu(menu);
+                GetMenu(chosenMenu);
 
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
                 string answer = Console.ReadLine();
 
                 status = int.TryParse(answer, out loginNumber);
 
-                if (!status)
+                if (!status || loginNumber > )
                 {
                     RSGymUtility.WriteMessage("Digite um número válido.", "\n");
                 }
 
             } while (!status);
 
-            return loginNumber;
+            return menuNumber;
         }
 
 
