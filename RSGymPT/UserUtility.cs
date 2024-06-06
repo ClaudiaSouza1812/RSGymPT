@@ -49,7 +49,7 @@ namespace RSGymPT
                     user = User.LogInUser(users);
                 }
 
-            } while (loginAction != "Sair" && (user.Name == "" || user == null);
+            } while (loginAction != "Sair" && (user.Name == "" || user == null));
 
             
             
