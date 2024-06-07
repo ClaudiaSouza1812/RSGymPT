@@ -18,10 +18,10 @@ namespace RSGymPT
             Dictionary<string, string> loginMenu = ShowLoginMenu();
 
             // Create inicial 2 users
-            List<User> users = User.CreateUser();
+            List<User> users = User.CreateUsers();
 
             // Create initial 3 PTs
-            List<PersonalTrainer> personalTrainers = PersonalTrainer.CreatePersonalTrainer();
+            List<PersonalTrainer> personalTrainers = PersonalTrainer.CreatePersonalTrainers();
 
             // Create a new user
             User user = new User();
@@ -100,7 +100,7 @@ namespace RSGymPT
                             case "Pesquisar":
                                 do
                                 {
-                                    PersonalTrainer.FindPersonalTrainer(personalTrainers);
+                                    PersonalTrainer.FindPersonalTrainerByCode(personalTrainers);
 
                                 } while (KeepGoing() == "s");
                                 break;
@@ -131,10 +131,8 @@ namespace RSGymPT
 
         internal static string KeepGoing()
         {
-            string answer;
-
             RSGymUtility.WriteMessage("Continuar? (s/n): ", "\n");
-            answer = Console.ReadLine().ToLower();
+            string answer = Console.ReadLine().ToLower();
 
             return answer;
         }

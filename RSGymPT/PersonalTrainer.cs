@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using Utility;
@@ -81,58 +82,59 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        // Method to create fictitious users
-        internal static List<PersonalTrainer> CreatePersonalTrainer()
+        // Function to create and return 3 initial Personal Trainers
+        internal static List<PersonalTrainer> CreatePersonalTrainers()
         {
             List<PersonalTrainer> personalTrainers = new List<PersonalTrainer>()
             {
                 new PersonalTrainer("Eduardo Cabrita", "999888777", "PT001"),
                 new PersonalTrainer("Perseu Antunes", "999777666", "PT002"),
                 new PersonalTrainer("Klaus Ofner", "999777666", "PT003")
-        };
+            };
+
             return personalTrainers;
         }
 
-        internal static string AskPtCode()
-        {
-            RSGymUtility.WriteMessage("Digite o código do PT: ", "", "\n");
-
-            string ptCode = Console.ReadLine();
-
-            return ptCode;
-
-        }
-
-        internal static PersonalTrainer FindCode(List<PersonalTrainer> personalTrainers) 
-        {
-            string ptCode = AskPtCode().ToUpper();
-
-            foreach (PersonalTrainer ptrainer in personalTrainers)
-            {
-                if (ptrainer.PtCode == ptCode)
-                {
-                    return ptrainer;
-                }
-            }
-            return null;
-        }
-
-        internal static void FindPersonalTrainer(List<PersonalTrainer> personalTrainers)
+        
+        internal static void FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainers) 
         {
             Console.Clear();
 
             RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer", "", "\n\n");
 
-            PersonalTrainer personalTrainer = FindCode(personalTrainers);
+            string ptCode = AskPtCode();
 
-            if (personalTrainer != null)
-            {
-                RSGymUtility.WriteMessage($"O código {personalTrainer.PtCode} pertence ao Personal Trainer: \nNome: {personalTrainer.FullName}\nTelemóvel: {personalTrainer.CellPhone}", "\n", "\n");
-            }
-            else
+            PersonalTrainer personalTrainer = ValidatePersonalTrainer(personalTrainers, ptCode);
+
+            if (personalTrainer == null)
             {
                 RSGymUtility.WriteMessage("Código inexistente.", "", "\n");
+                return;
             }
+
+            personalTrainer.ShowPersonalTrainer();
+        }
+
+        // Function to ask and return the PT code
+        internal static string AskPtCode()
+        {
+            RSGymUtility.WriteMessage("Digite o código do PT: ", "", "\n");
+
+            string ptCode = Console.ReadLine().ToUpper();
+
+            return ptCode;
+
+        }
+
+        internal static PersonalTrainer ValidatePersonalTrainer(List<PersonalTrainer> personalTrainers, string code)
+        {
+            var personalTrainer = personalTrainers.FirstOrDefault(c => c.PtCode == code);
+            return personalTrainer;
+        }
+
+        internal void ShowPersonalTrainer()
+        {
+            RSGymUtility.WriteMessage($"O código {PtCode} pertence ao Personal Trainer: \nNome: {FullName}\nTelemóvel: {CellPhone}", "\n", "\n");
         }
 
         #endregion

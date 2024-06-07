@@ -101,8 +101,8 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        // Method to create 2 initial users
-        internal static List<User> CreateUser()
+        // Function to create and return 2 initial users
+        internal static List<User> CreateUsers()
         {
             List<User> users = new List<User>()
             {
@@ -124,26 +124,37 @@ namespace RSGymPT
             
         }*/
 
+        // Function to login and return the user
         internal static User LogInUser(List<User> users)
         {
-            User user = new User();
-
             string userName = AskUserName();
 
-            bool isValidUser = CheckUserName(users, userName);
-
-            if (isValidUser)
+            if (!CheckUserName(users, userName))
             {
-                string password = AskUserPassword();
+                RSGymUtility.WriteMessage("Nome de utilizador inválido.", "", "\n");
 
-                user = CheckUserPassword(users, password);
+                RSGymUtility.PauseConsole();
+
+                return null;
+            }
+
+            string password = AskUserPassword();
+
+            User user = ValidateUser(users, userName, password);
+
+            if (user == null)
+            {
+                RSGymUtility.WriteMessage("Palavra-passe inválida.", "", "\n");
+
+                RSGymUtility.PauseConsole();
 
                 return user;
             }
 
-            return null;
+            return user;
         }
 
+        // Function to ask and return the user username
         internal static string AskUserName()
         {
             Console.Clear();
@@ -153,59 +164,33 @@ namespace RSGymPT
             RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
 
             string userName = Console.ReadLine().ToLower();
-
             return userName;
         }
 
-
+        // Function to check if the username is valid, returning true or false
         internal static bool CheckUserName(List<User> users, string userName)
         {
-            foreach (User user in users)
-            {
-                if (user.UserName == userName)
-                {
-                    //UserName = userName;
-
-                    return true;
-                }
-            }
-
-            RSGymUtility.WriteMessage("Nome de utilizador inválido.", "", "\n");
-
-            RSGymUtility.PauseConsole();
-
-            return false;
+            var isValid = users.Any(u => u.UserName == userName);
+            return isValid;
         }
 
-
+        // Function to ask and return the user password 
         internal static string AskUserPassword()
         {
             RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
 
             string password = Console.ReadLine().ToLower();
-
             return password;
-
         }
 
-        internal static User CheckUserPassword(List<User> users, string password)
+        // Function to validate and return the user 
+        internal static User ValidateUser(List<User> users, string userName, string password)
         {
-            foreach (User user in users)
-            {
-                if (user.Password == password)
-                {
-                    return user;
-                }
-            }
-
-            RSGymUtility.WriteMessage("Palavra-passe inválida.", "", "\n");
-
-            RSGymUtility.PauseConsole();
-
-            return null;
+            var user = users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            return user;
         }
 
-
+        // Method to list users properties
         internal static void ListUser(List<User> list) 
         {
             RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
@@ -216,11 +201,6 @@ namespace RSGymPT
             }
         }
 
-
-
-        #endregion
-
-        #region Destructor
 
         #endregion
     }
