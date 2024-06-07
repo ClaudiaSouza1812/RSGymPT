@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using Utility;
@@ -42,7 +43,7 @@ namespace RSGymPT
         */
 
         internal int UserId { get; }
-        internal int NextId { get; set; } = 1;
+        private static int NextId { get; set; } = 1;
         internal string Name { get; set; }
         internal DateTime Birth { get; set; }
         internal string UserName { get; set; }
@@ -64,14 +65,8 @@ namespace RSGymPT
         #endregion
 
         #region Bodied-expression properties 3.0
-        /* 
-        Exemplo de uma propriedade usando Bodied-expression properties
-        internal double Value02
-        {
-            get => value02;         // => lambda operator
-            set => value02 = value;
-        }
-        */
+        internal string FullUser => $"(Id): {UserId}\n(Nome): {Name}\n(Data de nascimento): {Birth.ToShortDateString()}";
+
 
         #endregion
         #endregion
@@ -131,10 +126,9 @@ namespace RSGymPT
 
             if (!CheckUserName(users, userName))
             {
-                RSGymUtility.WriteMessage("Nome de utilizador inválido.", "", "\n");
+                RSGymUtility.WriteMessage("Nome de utilizador inválido ou inexistente.", "", "\n");
 
                 RSGymUtility.PauseConsole();
-
                 return null;
             }
 
@@ -147,7 +141,6 @@ namespace RSGymPT
                 RSGymUtility.WriteMessage("Palavra-passe inválida.", "", "\n");
 
                 RSGymUtility.PauseConsole();
-
                 return user;
             }
 
@@ -170,7 +163,7 @@ namespace RSGymPT
         // Function to check if the username is valid, returning true or false
         internal static bool CheckUserName(List<User> users, string userName)
         {
-            var isValid = users.Any(u => u.UserName == userName);
+            bool isValid = users.Any(u => u.UserName == userName);
             return isValid;
         }
 
@@ -186,18 +179,20 @@ namespace RSGymPT
         // Function to validate and return the user 
         internal static User ValidateUser(List<User> users, string userName, string password)
         {
-            var user = users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            User user = users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
             return user;
         }
 
         // Method to list users properties
         internal static void ListUser(List<User> list) 
         {
+            Console.Clear();
+
             RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
 
             foreach (User user in list)
             {
-                RSGymUtility.WriteMessage($"Id: {user.UserId}\nNome: {user.Name}\nData de nascimento: {user.Birth.ToShortDateString()}", "", "\n\n");
+                RSGymUtility.WriteMessage($"{user.FullUser}", "\n", "\n");
             }
         }
 

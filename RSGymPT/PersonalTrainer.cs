@@ -25,7 +25,7 @@ namespace RSGymPT
         */
 
         internal int PersonalTrainerId { get; }
-        internal int NextId { get; set; } = 1;
+        private static int NextId { get; set; } = 1;
         internal string FullName { get; set; }
         internal string CellPhone { get; set; }
         internal string PtCode { get; set; }
@@ -46,14 +46,7 @@ namespace RSGymPT
         #endregion
 
         #region Bodied-expression properties 3.0
-        /* 
-        Exemplo de uma propriedade usando Bodied-expression properties
-        internal double Value02
-        {
-            get => value02;         // => lambda operator
-            set => value02 = value;
-        }
-        */
+        internal string FullPersonalTrainer => $"{PersonalTrainerId} - (Código): {PtCode}\n(Nome): {FullName}\n(Telemóvel): {CellPhone}";
 
         #endregion
         #endregion
@@ -95,8 +88,8 @@ namespace RSGymPT
             return personalTrainers;
         }
 
-        
-        internal static void FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainers) 
+        // Method to find and show PTs
+        internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainers) 
         {
             Console.Clear();
 
@@ -109,10 +102,15 @@ namespace RSGymPT
             if (personalTrainer == null)
             {
                 RSGymUtility.WriteMessage("Código inexistente.", "", "\n");
-                return;
+                return personalTrainer;
             }
 
-            personalTrainer.ShowPersonalTrainer();
+            return personalTrainer;
+        }
+
+        internal static void ShowPersonalTrainer(PersonalTrainer personalTrainer)
+        {
+            RSGymUtility.WriteMessage($"{personalTrainer.FullPersonalTrainer}", "\n", "\n");
         }
 
         // Function to ask and return the PT code
@@ -121,21 +119,29 @@ namespace RSGymPT
             RSGymUtility.WriteMessage("Digite o código do PT: ", "", "\n");
 
             string ptCode = Console.ReadLine().ToUpper();
-
             return ptCode;
-
         }
 
+        // Function to validate and return the PT 
         internal static PersonalTrainer ValidatePersonalTrainer(List<PersonalTrainer> personalTrainers, string code)
         {
-            var personalTrainer = personalTrainers.FirstOrDefault(c => c.PtCode == code);
+            PersonalTrainer personalTrainer = personalTrainers.FirstOrDefault(c => c.PtCode == code);
             return personalTrainer;
         }
 
-        internal void ShowPersonalTrainer()
+        // Method to list personal trainers properties
+        internal static void ListPersonalTrainers(List<PersonalTrainer> personalTrainers)
         {
-            RSGymUtility.WriteMessage($"O código {PtCode} pertence ao Personal Trainer: \nNome: {FullName}\nTelemóvel: {CellPhone}", "\n", "\n");
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("Personal Trainers - List", "\n", "\n\n");
+
+            foreach (PersonalTrainer personalTrainer in personalTrainers)
+            {
+                RSGymUtility.WriteMessage(personalTrainer.FullPersonalTrainer, "", "\n");
+            }
         }
+
 
         #endregion
     }

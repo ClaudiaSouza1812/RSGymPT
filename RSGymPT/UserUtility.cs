@@ -9,7 +9,7 @@ namespace RSGymPT
 {
     internal class UserUtility
     {
-        internal static void StartRSGymProgram()
+        internal static void RunRSGymProgram()
         {
             // Show RSGymPT logo
             ShowLogo("begin");
@@ -24,19 +24,15 @@ namespace RSGymPT
             List<PersonalTrainer> personalTrainers = PersonalTrainer.CreatePersonalTrainers();
 
             // Create a new user
-            User user = new User();
-            user = null;
-
-            // Create a new PT
-            PersonalTrainer personalTrainer = new PersonalTrainer();
+            User user = null;
 
             string loginAction;
             int loginKey;
 
             do
             {
-                loginKey = GetChoice("login");
-                loginAction = CheckLoginChoice(loginMenu, loginKey);
+                loginKey = GetUserChoice("login");
+                loginAction = ValidateLoginMenu(loginMenu, loginKey);
 
                 if (loginAction == "Sair")
                 {
@@ -53,16 +49,14 @@ namespace RSGymPT
             } while (loginAction != "Sair" && user == null);
 
             
-            
-
             Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu();
             int menuKey;
             string[] menuAction;
 
             do
             {
-                menuKey = GetChoice("main");
-                menuAction = CheckMainMenuChoice(mainMenu, menuKey);
+                menuKey = GetUserChoice("main");
+                menuAction = ValidateMainMenu(mainMenu, menuKey);
 
                 switch (menuAction[0])
                 {
@@ -100,11 +94,13 @@ namespace RSGymPT
                             case "Pesquisar":
                                 do
                                 {
-                                    PersonalTrainer.FindPersonalTrainerByCode(personalTrainers);
+                                    PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainers);
+                                    PersonalTrainer.ShowPersonalTrainer(personalTrainer);
 
                                 } while (KeepGoing() == "s");
                                 break;
                             case "Listar":
+                                PersonalTrainer.ListPersonalTrainers(personalTrainers);
                                 break;
                             default:
                                 RSGymUtility.WriteMessage("Escolha um número válido.");
@@ -114,13 +110,12 @@ namespace RSGymPT
                     case "Utilizador":
                         if (menuAction[1] == "Listar")
                         {
-                                
-                        }
-                        else
-                        {
-                            RSGymUtility.WriteMessage("Escolha um número válido.");
+                            User.ListUser(users);
                         }
                         break;
+                default:
+                    RSGymUtility.WriteMessage("Escolha um número válido.");
+                    break;
                 }
             } while (menuAction[1] != "Logout");
 
@@ -205,8 +200,8 @@ namespace RSGymPT
         }
 
 
-        // Get user choice to each menu
-        internal static int GetChoice(string chosenMenu)
+        // Get user menu number choice
+        internal static int GetUserChoice(string chosenMenu)
         {
             int menuNumber;
             bool status;
@@ -219,9 +214,9 @@ namespace RSGymPT
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
                 string answer = Console.ReadLine();
 
-                status = int.TryParse(answer, out loginNumber);
+                status = int.TryParse(answer, out menuNumber);
 
-                if (!status || loginNumber > )
+                if (!status)
                 {
                     RSGymUtility.WriteMessage("Digite um número válido.", "\n");
                 }
@@ -230,7 +225,6 @@ namespace RSGymPT
 
             return menuNumber;
         }
-
 
         internal static void GetMenu(string menu)
         {
@@ -246,7 +240,7 @@ namespace RSGymPT
 
 
         // Check if the input is a valid choice
-        internal static string CheckLoginChoice(Dictionary<string, string> loginMenu, int key)
+        internal static string ValidateLoginMenu(Dictionary<string, string> loginMenu, int key)
         {
             string action;
             bool status;
@@ -265,15 +259,13 @@ namespace RSGymPT
             return string.Empty;
         }
 
-        internal static string[] CheckMainMenuChoice(Dictionary<string, Dictionary<string, string>> mainMenu, int menuKey)
+        internal static string[] ValidateMainMenu(Dictionary<string, Dictionary<string, string>> mainMenu, int menuKey)
         {
-            string[] menuSubmenu = new string[2];
-            string action = null;
-            bool status = false;
+            string[] menuSubmenu = { null, null};
 
             foreach (KeyValuePair<string, Dictionary<string, string>> menu in mainMenu)
             {
-                status = menu.Value.TryGetValue(menuKey.ToString(), out action);
+                bool status = menu.Value.TryGetValue(menuKey.ToString(), out string action);
 
                 if (status)
                 {
@@ -284,12 +276,7 @@ namespace RSGymPT
                 }
             }
 
-            
-            RSGymUtility.WriteMessage($"Escolha um número válido.", "\n", "\n");
-
-            RSGymUtility.PauseConsole();
-
-            return null;
+            return menuSubmenu;
         }
 
 

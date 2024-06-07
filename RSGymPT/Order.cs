@@ -28,7 +28,7 @@ namespace RSGymPT
         */
 
         internal int OrderId { get; }
-        internal int NextId { get; set; } = 1;
+        private static int NextId { get; set; } = 1;
         internal int UserId { get; set; }
         internal string PtCode { get; set; }
         internal DateTime TrainingDateTime { get; set; }
@@ -118,7 +118,7 @@ namespace RSGymPT
 
             do
             {
-                personalTrainer = PersonalTrainer.FindCode(personalTrainers);
+                personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainers);
 
                 if (personalTrainer != null)
                 {

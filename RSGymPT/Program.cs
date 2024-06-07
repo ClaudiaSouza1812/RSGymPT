@@ -15,20 +15,7 @@ namespace RSGymPT
             // Method to output characters encoded to UTF-8 
             RSGymUtility.SetUnicodeConsole();
 
-            UserUtility.StartRSGymProgram();
-
-
-            
-            
-
-
-            
-
-
-
-            //Login.LogInUser();
-
-            //User.ListUser(users);
+            UserUtility.RunRSGymProgram();
 
             RSGymUtility.TerminateConsole();
         
