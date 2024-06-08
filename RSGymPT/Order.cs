@@ -15,7 +15,7 @@ namespace RSGymPT
         /*
         variáveis internas da classe para serem usadas dentro das propriedades (Classic properties / Bodied-expression properties)
         */
-        private static List<Order> orders = new List<Order>();
+        private static List<Order> ordersList = new List<Order>();
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace RSGymPT
         internal int UserId { get; set; }
         internal string PtCode { get; set; }
         internal DateTime TrainingDateTime { get; set; }
-        internal string OrderStatus { get; set; }
+        internal string ordersListtatus { get; set; }
 
         #endregion
 
@@ -71,17 +71,17 @@ namespace RSGymPT
             UserId = 0;
             PtCode = string.Empty;
             TrainingDateTime = DateTime.Today;
-            OrderStatus = string.Empty;
+            ordersListtatus = string.Empty;
         }
         // Fazer segundo construtor com inserção parâmetros obrigatórios
 
-        internal Order(int userId, string ptCode, DateTime trainingDateTime, string orderStatus)
+        internal Order(int userId, string ptCode, DateTime trainingDateTime, string ordersListtatus)
         {
             OrderId = NextId++;
             UserId = userId;
             PtCode = ptCode;
             TrainingDateTime = trainingDateTime;
-            OrderStatus = orderStatus;
+            ordersListtatus = ordersListtatus;
         }
         #endregion
 
@@ -89,18 +89,18 @@ namespace RSGymPT
         #region Methods (public or internal)
 
         // 
-        internal static void AddOrder(List<PersonalTrainer> personalTrainers, User user)
+        internal static void AddOrder(List<Order> ordersList, List<PersonalTrainer> personalTrainersList, User user)
         {
             Order order = new Order();
 
-            CreateOrder(order, personalTrainers, user);
+            CreateOrder(ordersList, personalTrainersList, user, order);
 
 
-            orders.Add(order);
+            ordersList.Add(order);
 
         }
 
-        internal static void CreateOrder(Order order, List<PersonalTrainer> personalTrainers, User user) 
+        internal static void CreateOrder(Order order, List<PersonalTrainer> personalTrainersList, User user) 
         {
             Console.Clear();
 
@@ -118,7 +118,7 @@ namespace RSGymPT
 
             do
             {
-                personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainers);
+                personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList);
 
                 if (personalTrainer != null)
                 {
@@ -147,7 +147,7 @@ namespace RSGymPT
                 string answer = Console.ReadLine();
 
                 isDateTime = DateTime.TryParse(answer, out dateTime);
-                isAvailable = SetOrderStatus(dateTime, order.PtCode);
+                isAvailable = SetordersListtatus(dateTime, order.PtCode);
 
                 if (!isDateTime)
                 {
@@ -171,17 +171,15 @@ namespace RSGymPT
             } while (!isDateTime && !isAvailable);
 
             order.TrainingDateTime = dateTime;
-            order.OrderStatus = "Agendado";
+            order.ordersListtatus = "Agendado";
 
             #endregion
 
         }
 
-        #endregion
-
-        internal static bool SetOrderStatus(DateTime dateTime, string ptCode)
+        internal static bool SetordersListtatus(DateTime dateTime, string ptCode)
         {
-            foreach (Order order in orders)
+            foreach (Order order in ordersList)
             {
                 if (ptCode == order.PtCode && dateTime.Date == order.TrainingDateTime.Date && dateTime.TimeOfDay == order.TrainingDateTime.TimeOfDay)
                 {
@@ -191,23 +189,26 @@ namespace RSGymPT
             return true;
         }
 
-        internal static void ListOrdersByUser(User user)
+        internal static void ListordersListByUser(User user)
         {
             bool haveOrder = false;
 
-            foreach (Order order in orders)
+            foreach (Order order in ordersList)
             {
                 if (user.UserId == order.UserId)
                 {
-                    RSGymUtility.WriteMessage($"Pedido: {order.OrderId}, PT: {order.PtCode}, Data e hora da sessão: {order.TrainingDateTime}, Estado: {order.OrderStatus}.", "", "\n\n");
+                    RSGymUtility.WriteMessage($"Pedido: {order.OrderId}, PT: {order.PtCode}, Data e hora da sessão: {order.TrainingDateTime}, Estado: {order.ordersListtatus}.", "", "\n\n");
                     haveOrder = true;
                 }
             }
 
-            if (!haveOrder) 
+            if (!haveOrder)
             {
                 RSGymUtility.WriteMessage($"{user.Name}, você ainda não tem sessões agendadas.", "", "\n\n");
             }
+            #endregion
+
+
         }
     }
 }

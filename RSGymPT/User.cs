@@ -96,16 +96,16 @@ namespace RSGymPT
 
         #region Methods (public or internal)
 
-        // Function to create and return 2 initial users
-        internal static List<User> CreateUsers()
+        // Function to create and return 2 initial usersList
+        internal static List<User> CreateusersList()
         {
-            List<User> users = new List<User>()
+            List<User> usersList = new List<User>()
             {
                 new User("Claudia Simone de Souza", new DateTime(1992, 12, 18), "clasi", "12345678"),
                 new User("Paula de Fátima Vallim Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321")
             };
 
-            return users;
+            return usersList;
         }
 
 
@@ -120,11 +120,11 @@ namespace RSGymPT
         }*/
 
         // Function to login and return the user
-        internal static User LogInUser(List<User> users)
+        internal static User LogInUser(List<User> usersList)
         {
             string userName = AskUserName();
 
-            if (!CheckUserName(users, userName))
+            if (!CheckUserName(usersList, userName))
             {
                 RSGymUtility.WriteMessage("Nome de utilizador inválido ou inexistente.", "", "\n");
 
@@ -134,7 +134,7 @@ namespace RSGymPT
 
             string password = AskUserPassword();
 
-            User user = ValidateUser(users, userName, password);
+            User user = ValidateUser(usersList, userName, password);
 
             if (user == null)
             {
@@ -161,9 +161,9 @@ namespace RSGymPT
         }
 
         // Function to check if the username is valid, returning true or false
-        internal static bool CheckUserName(List<User> users, string userName)
+        internal static bool CheckUserName(List<User> usersList, string userName)
         {
-            bool isValid = users.Any(u => u.UserName == userName);
+            bool isValid = usersList.Any(u => u.UserName == userName);
             return isValid;
         }
 
@@ -177,18 +177,18 @@ namespace RSGymPT
         }
 
         // Function to validate and return the user 
-        internal static User ValidateUser(List<User> users, string userName, string password)
+        internal static User ValidateUser(List<User> usersList, string userName, string password)
         {
-            User user = users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            User user = usersList.FirstOrDefault(u => u.UserName == userName && u.Password == password);
             return user;
         }
 
-        // Method to list users properties
+        // Method to list usersList properties
         internal static void ListUser(List<User> list) 
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
+            RSGymUtility.WriteTitle("usersList - List", "\n", "\n\n");
 
             foreach (User user in list)
             {

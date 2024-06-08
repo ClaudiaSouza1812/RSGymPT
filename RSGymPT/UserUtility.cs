@@ -17,14 +17,18 @@ namespace RSGymPT
             // Show the login menu
             Dictionary<string, string> loginMenu = ShowLoginMenu();
 
-            // Create inicial 2 users
-            List<User> users = User.CreateUsers();
+            // Create inicial 2 usersList
+            List<User> usersList = User.CreateusersList();
 
             // Create initial 3 PTs
-            List<PersonalTrainer> personalTrainers = PersonalTrainer.CreatePersonalTrainers();
+            List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatepersonalTrainersList();
 
             // Create a new user
             User user = null;
+
+            // Create a list of ordersList
+            List<Order> ordersList = new List<Order>();
+
 
             string loginAction;
             int loginKey;
@@ -43,7 +47,7 @@ namespace RSGymPT
 
                 if (loginAction == "Login")
                 {
-                    user = User.LogInUser(users);
+                    user = User.LogInUser(usersList);
                 }
 
             } while (loginAction != "Sair" && user == null);
@@ -66,7 +70,7 @@ namespace RSGymPT
                             case "Registar":
                                 do
                                 {
-                                    Order.AddOrder(personalTrainers, user);
+                                    Order.AddOrder(ordersList, personalTrainersList, user);
 
                                 } while (KeepGoing() == "s");
                                 break;
@@ -78,7 +82,7 @@ namespace RSGymPT
                                 break;
 
                             case "Listar":
-                                Order.ListOrdersByUser(user);
+                                Order.ListordersListByUser(user);
                                 break;
 
                             case "Terminar":
@@ -94,13 +98,13 @@ namespace RSGymPT
                             case "Pesquisar":
                                 do
                                 {
-                                    PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainers);
+                                    PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList);
                                     PersonalTrainer.ShowPersonalTrainer(personalTrainer);
 
                                 } while (KeepGoing() == "s");
                                 break;
                             case "Listar":
-                                PersonalTrainer.ListPersonalTrainers(personalTrainers);
+                                PersonalTrainer.ListpersonalTrainersList(personalTrainersList);
                                 break;
                             default:
                                 RSGymUtility.WriteMessage("Escolha um número válido.");
@@ -110,7 +114,7 @@ namespace RSGymPT
                     case "Utilizador":
                         if (menuAction[1] == "Listar")
                         {
-                            User.ListUser(users);
+                            User.ListUser(usersList);
                         }
                         break;
                 default:

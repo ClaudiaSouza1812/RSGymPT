@@ -76,20 +76,20 @@ namespace RSGymPT
         #region Methods (public or internal)
 
         // Function to create and return 3 initial Personal Trainers
-        internal static List<PersonalTrainer> CreatePersonalTrainers()
+        internal static List<PersonalTrainer> CreatepersonalTrainersList()
         {
-            List<PersonalTrainer> personalTrainers = new List<PersonalTrainer>()
+            List<PersonalTrainer> personalTrainersList = new List<PersonalTrainer>()
             {
                 new PersonalTrainer("Eduardo Cabrita", "999888777", "PT001"),
                 new PersonalTrainer("Perseu Antunes", "999777666", "PT002"),
                 new PersonalTrainer("Klaus Ofner", "999777666", "PT003")
             };
 
-            return personalTrainers;
+            return personalTrainersList;
         }
 
         // Method to find and show PTs
-        internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainers) 
+        internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainersList) 
         {
             Console.Clear();
 
@@ -97,7 +97,7 @@ namespace RSGymPT
 
             string ptCode = AskPtCode();
 
-            PersonalTrainer personalTrainer = ValidatePersonalTrainer(personalTrainers, ptCode);
+            PersonalTrainer personalTrainer = ValidatePersonalTrainer(personalTrainersList, ptCode);
 
             if (personalTrainer == null)
             {
@@ -123,20 +123,20 @@ namespace RSGymPT
         }
 
         // Function to validate and return the PT 
-        internal static PersonalTrainer ValidatePersonalTrainer(List<PersonalTrainer> personalTrainers, string code)
+        internal static PersonalTrainer ValidatePersonalTrainer(List<PersonalTrainer> personalTrainersList, string code)
         {
-            PersonalTrainer personalTrainer = personalTrainers.FirstOrDefault(c => c.PtCode == code);
+            PersonalTrainer personalTrainer = personalTrainersList.FirstOrDefault(c => c.PtCode == code);
             return personalTrainer;
         }
 
         // Method to list personal trainers properties
-        internal static void ListPersonalTrainers(List<PersonalTrainer> personalTrainers)
+        internal static void ListpersonalTrainersList(List<PersonalTrainer> personalTrainersList)
         {
             Console.Clear();
 
             RSGymUtility.WriteTitle("Personal Trainers - List", "\n", "\n\n");
 
-            foreach (PersonalTrainer personalTrainer in personalTrainers)
+            foreach (PersonalTrainer personalTrainer in personalTrainersList)
             {
                 RSGymUtility.WriteMessage(personalTrainer.FullPersonalTrainer, "", "\n");
             }
