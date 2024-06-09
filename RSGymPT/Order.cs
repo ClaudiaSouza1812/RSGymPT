@@ -124,6 +124,8 @@ namespace RSGymPT
                 {
                     RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n", "\n");
                     ShowPersonalTrainerAvailableSessions(ordersList, order.PtCode, order.TrainingDateTime);
+                    RSGymUtility.PauseConsole();
+                
                 }
                 
             } while (!isAvailable);
@@ -149,15 +151,15 @@ namespace RSGymPT
         }
 
 
-        internal static DateTime[] CreateHoursRange()
+        internal static DateTime[] CreateHoursRange(DateTime dateTime)
         {
-            DateTime minHour = DateTime.Today.AddHours(9);
-            DateTime maxHour = DateTime.Today.AddHours(21);
+            DateTime minHour = dateTime.Date.AddHours(9);
+            DateTime maxHour = dateTime.Date.AddHours(21);
             int range = maxHour.Hour - minHour.Hour;
-            DateTime[] sessionsRange = new DateTime[range];
+            DateTime[] sessionsRange = new DateTime[range + 1];
             
 
-            for (int i = 0; i < range; i++)
+            for (int i = 0; i <= range; i++)
             {
                 sessionsRange[i] = minHour;
                 minHour = minHour.AddHours(1);
@@ -168,24 +170,26 @@ namespace RSGymPT
         internal static void ShowPersonalTrainerAvailableSessions(List<Order> odersList, string ptCode, DateTime dateTime)
         {
             bool available = false;
-            DateTime[] sessionsRange = CreateHoursRange();
+            DateTime[] sessionsRange = CreateHoursRange(dateTime);
 
-            DateTime[] ptSessions = ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Day == dateTime.Day).Select(pt => pt.TrainingDateTime).ToArray();
+            DateTime[] ptSessions = ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Date == dateTime.Date).Select(pt => pt.TrainingDateTime).ToArray();
 
             if (ptSessions.Length != 0)
             {
                 RSGymUtility.WriteMessage($"({ptCode}) Sessões disponíveis: {dateTime.ToShortDateString()}", "", "\n");
 
-                foreach (DateTime hour in sessionsRange)
+                foreach (DateTime date in sessionsRange)
                 {
-                    if (!ptSessions.Contains(hour) && hour > DateTime.Now)
+                    // tratar sessões do mesmo dia
+                    if (dateTime.Date == DateTime.Today && !ptSessions.Contains(date) && date.TimeOfDay > DateTime.Now.TimeOfDay)
                     {
-                        RSGymUtility.WriteMessage($"({hour.ToShortTimeString()}) ");
+                        RSGymUtility.WriteMessage($"({date.ToShortTimeString()}) ");
                         available = true;
                     }
-                    if (!ptSessions.Contains(hour) && dateTime.Day > DateTime.Now.Day)
+                    // tratar sessões dos dias seguintes
+                    else if (!ptSessions.Contains(date))
                     {
-                        RSGymUtility.WriteMessage($"({hour.ToShortTimeString()}) ");
+                        RSGymUtility.WriteMessage($"({date.ToShortTimeString()}) ");
                         available = true;
                     }
                 }
@@ -209,28 +213,32 @@ namespace RSGymPT
 
                 RSGymUtility.WriteTitle("Registar Pedido de um PT", "", "\n\n");
                 RSGymUtility.WriteTitle("Data e Hora da Sessão", "", "\n\n");
+
                 ShowPersonalTrainerAvailableSessions(ordersList, ptCode, DateTime.Now);
-                RSGymUtility.WriteMessage($"Insira a data e hora da sessão, ex ({DateTime.Now.ToShortDateString()} {DateTime.Now.Hour + 1}:00): ", "\n", "\n");
+
+                RSGymUtility.WriteMessage($"Insira a data e hora da sessão, ex ({DateTime.Now.ToShortDateString()} {DateTime.Now.Hour + 1}:00): ", "\n\n", "\n");
 
                 
-
                 string answer = Console.ReadLine();
-                DateTime nextHour = DateTime.Now.AddHours(1);
                 isDateTime = DateTime.TryParse(answer, out dateTime);
+                DateTime nextHour = dateTime.AddHours(1);
 
                 if (!isDateTime)
                 {
                     RSGymUtility.WriteMessage("Data inválida. Inserir data e hora conforme informado acima.", "", "\n");
+                    RSGymUtility.PauseConsole();
                 }
                 else if (dateTime < DateTime.Now)
                 {
                     RSGymUtility.WriteMessage($"Agendamento de sessões apenas á partir de {nextHour.Hour}:00.", "", "\n");
                     isDateTime = false;
+                    RSGymUtility.PauseConsole();
                 }
-                else if (dateTime.TimeOfDay < minTime.TimeOfDay || dateTime.TimeOfDay > maxTime.TimeOfDay)
+                else if (dateTime.TimeOfDay < minTime.TimeOfDay || dateTime.TimeOfDay > maxTime.TimeOfDay || dateTime.TimeOfDay < nextHour.TimeOfDay)
                 {
                     RSGymUtility.WriteMessage($"Agendamento de sessões das {minTime.TimeOfDay} ás {maxTime.TimeOfDay}.", "", "\n");
                     isDateTime = false;
+                    RSGymUtility.PauseConsole();
                 }
 
             } while (!isDateTime);
@@ -245,7 +253,7 @@ namespace RSGymPT
             {
                 DateTime sessionDuration = order.TrainingDateTime.AddMinutes(50);
 
-                if (ptCode == order.PtCode && dateTime.Date == order.TrainingDateTime.Date && (dateTime.TimeOfDay == order.TrainingDateTime.TimeOfDay || dateTime.TimeOfDay < sessionDuration.TimeOfDay))
+                if (ptCode == order.PtCode && dateTime == order.TrainingDateTime && dateTime.TimeOfDay < sessionDuration.TimeOfDay)
                 {
                     return false;
                 }
