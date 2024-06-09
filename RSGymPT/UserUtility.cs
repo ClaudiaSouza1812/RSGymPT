@@ -70,7 +70,7 @@ namespace RSGymPT
                             case "Registar":
                                 do
                                 {
-                                    Order.AddOrder(ordersList, personalTrainersList, user);
+                                    Order.AddOrder(personalTrainersList, user);
 
                                 } while (KeepGoing() == "s");
                                 break;
@@ -82,7 +82,7 @@ namespace RSGymPT
                                 break;
 
                             case "Listar":
-                                Order.ListordersListByUser(user);
+                                Order.ListOrdersByUser(user);
                                 break;
 
                             case "Terminar":
