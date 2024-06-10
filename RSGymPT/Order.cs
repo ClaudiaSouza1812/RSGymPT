@@ -17,6 +17,13 @@ namespace RSGymPT
         */
         private static List<Order> ordersList = new List<Order>();
 
+        private static Dictionary<string, string> orderStatusOptions = new Dictionary<string, string>()
+        {
+            { "1", "Agendado" },
+            { "2", "Cancelado" },
+            { "3", "Terminado" }
+        };
+
         #endregion
 
 
@@ -82,7 +89,7 @@ namespace RSGymPT
         #region Methods (public or internal)
 
         // 
-        internal static void AddOrder(List<PersonalTrainer> personalTrainersList, User user)
+        internal static List<Order> AddOrder(List<PersonalTrainer> personalTrainersList, User user)
         {
             Order order = new Order();
 
@@ -90,6 +97,7 @@ namespace RSGymPT
 
             ordersList.Add(order);
 
+            return ordersList;
         }
 
         internal static void CreateOrder(List<Order> ordersList, List<PersonalTrainer> personalTrainersList, User user, Order order) 
@@ -129,7 +137,6 @@ namespace RSGymPT
                         RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n", "\n");
                         ShowPersonalTrainerAvailableSessions(ordersList, order.PtCode, order.TrainingDateTime);
                         RSGymUtility.PauseConsole();
-
                     }
                 }
                 else
@@ -139,11 +146,9 @@ namespace RSGymPT
                     RSGymUtility.PauseConsole();
                 }
 
-                
-
             } while (!userIsAvailable || !ptIsAvailable);
 
-            order.OrderStatus = "Agendado";
+            order.OrderStatus = orderStatusOptions.Values.ElementAt(0);
 
             RSGymUtility.WriteMessage($"{order.FullOrder}", "\n", "\n\n");
 
@@ -288,6 +293,64 @@ namespace RSGymPT
             return true;
         }
 
+
+        internal static List<Order> ChangeOrder(List<Order> ordersList, List<PersonalTrainer> personalTrainersList, User user)
+        {
+            bool isNumber;
+            do
+            {
+                ListBookedOrders(ordersList, user);
+
+                RSGymUtility.WriteTitle("Change Orders", "\n", "\n\n");
+
+                RSGymUtility.WriteMessage("Insira o número do pedido que deseja alterar: ", "", "\n");
+
+                string answer = Console.ReadLine();
+
+                isNumber = int.TryParse(answer, out int orderNumber);
+
+                Order order = ordersList.FirstOrDefault(o => o.OrderId == orderNumber);
+
+                if (!isNumber || order == null)
+                {
+                    RSGymUtility.WriteMessage("Número inválido.", "", "\n");
+                    RSGymUtility.PauseConsole();
+                }
+                else
+                {
+                    order.PtCode = GetPersonalTrainerCode(personalTrainersList);
+
+                    order.TrainingDateTime = GetTrainingDateTime(order.PtCode);
+
+                    RSGymUtility.WriteMessage($"{order.FullOrder}", "", "\n\n");
+
+                    RSGymUtility.WriteMessage("Pedido alterado com sucesso.", "", "\n");
+                }
+            } while (!isNumber);
+            
+
+
+            return ordersList; 
+        
+        }
+
+
+        internal static void ListBookedOrders(List<Order> ordersList, User user)
+        {
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("Booked Orders", "\n", "\n\n");
+
+            foreach (Order order in ordersList)
+            {
+                if (order.OrderStatus == "Agendado")
+                {
+                    RSGymUtility.WriteMessage($"{order.FullOrder}", "", "\n");
+                }
+            }
+        }
+
+
         internal static void ListOrdersByUser(User user)
         {
             Console.Clear();
@@ -308,8 +371,11 @@ namespace RSGymPT
             if (!haveOrder)
             {
                 RSGymUtility.WriteMessage($"{user.Name}, você ainda não tem sessões agendadas.", "", "\n\n");
-                RSGymUtility.PauseConsole();
             }
+
+            RSGymUtility.PauseConsole();
+
+
             #endregion
 
 

@@ -110,7 +110,10 @@ namespace RSGymPT
 
         internal static void ShowPersonalTrainer(PersonalTrainer personalTrainer)
         {
-            RSGymUtility.WriteMessage($"{personalTrainer.FullPersonalTrainer}", "\n", "\n");
+            if (personalTrainer != null)
+            {
+                RSGymUtility.WriteMessage($"{personalTrainer.FullPersonalTrainer}", "\n", "\n");
+            }   
         }
 
         // Function to ask and return the PT code
@@ -140,7 +143,6 @@ namespace RSGymPT
             {
                 RSGymUtility.WriteMessage(personalTrainer.FullPersonalTrainer, "", "\n\n");
             }
-
             RSGymUtility.PauseConsole();
         }
 

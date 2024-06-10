@@ -70,12 +70,23 @@ namespace RSGymPT
                             case "Registar":
                                 do
                                 {
-                                    Order.AddOrder(personalTrainersList, user);
+                                    ordersList = Order.AddOrder(personalTrainersList, user);
 
                                 } while (KeepGoing() == "s");
                                 break;
 
                             case "Alterar":
+                                do
+                                {
+                                    if (ordersList.Count == 0)
+                                    {
+                                        RSGymUtility.WriteMessage("Não existem pedidos para alterar.", "", "\n");
+                                        RSGymUtility.PauseConsole();
+                                        break;
+                                    }
+                                    ordersList = Order.ChangeOrder(ordersList, personalTrainersList, user);
+
+                                } while (KeepGoing() == "s");
                                 break;
 
                             case "Eliminar":

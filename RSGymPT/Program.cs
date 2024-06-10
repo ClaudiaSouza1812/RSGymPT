@@ -17,7 +17,6 @@ namespace RSGymPT
 
             UserUtility.RunRSGymProgram();
 
-            RSGymUtility.TerminateConsole();
         
         }
     }
