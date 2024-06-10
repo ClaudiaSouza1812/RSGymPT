@@ -87,9 +87,6 @@ namespace RSGymPT
 
                             case "Terminar":
                                 break;
-                            default:
-                                RSGymUtility.WriteMessage("Escolha um número válido.");
-                                break;
                         }
                         break;
                     case "Personal Trainer":
@@ -105,9 +102,6 @@ namespace RSGymPT
                                 break;
                             case "Listar":
                                 PersonalTrainer.ListpersonalTrainersList(personalTrainersList);
-                                break;
-                            default:
-                                RSGymUtility.WriteMessage("Escolha um número válido.");
                                 break;
                         }
                         break;

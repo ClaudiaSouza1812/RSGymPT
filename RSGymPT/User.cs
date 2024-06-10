@@ -188,12 +188,13 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("usersList - List", "\n", "\n\n");
+            RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
 
             foreach (User user in list)
             {
                 RSGymUtility.WriteMessage($"{user.FullUser}", "\n", "\n");
             }
+            RSGymUtility.PauseConsole();
         }
 
 

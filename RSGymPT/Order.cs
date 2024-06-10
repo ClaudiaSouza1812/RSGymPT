@@ -106,7 +106,7 @@ namespace RSGymPT
 
             #region PtCode and TrainingDateTime
 
-            bool isAvailable;
+            bool userIsAvailable, ptIsAvailable = false;
             
             do
             {
@@ -118,17 +118,30 @@ namespace RSGymPT
 
                 order.TrainingDateTime = GetTrainingDateTime(order.PtCode);
 
-                isAvailable = CheckPtAvailability(order.TrainingDateTime, order.PtCode);
+                userIsAvailable = CheckUserAvailability(order.TrainingDateTime, order.UserId);
 
-                if (!isAvailable)
+                if (userIsAvailable)
                 {
-                    RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n", "\n");
-                    ShowPersonalTrainerAvailableSessions(ordersList, order.PtCode, order.TrainingDateTime);
-                    RSGymUtility.PauseConsole();
-                
+                    ptIsAvailable = CheckPtAvailability(order.TrainingDateTime, order.PtCode);
+
+                    if (!ptIsAvailable)
+                    {
+                        RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n", "\n");
+                        ShowPersonalTrainerAvailableSessions(ordersList, order.PtCode, order.TrainingDateTime);
+                        RSGymUtility.PauseConsole();
+
+                    }
                 }
+                else
+                {
+                    ListOrdersByUser(user);
+                    RSGymUtility.WriteMessage("Você já tem uma sessão agendada nesta data e horário, escolha outra Data e hora.", "", "\n");
+                    RSGymUtility.PauseConsole();
+                }
+
                 
-            } while (!isAvailable);
+
+            } while (!userIsAvailable || !ptIsAvailable);
 
             order.OrderStatus = "Agendado";
 
@@ -187,7 +200,7 @@ namespace RSGymPT
                         available = true;
                     }
                     // tratar sessões dos dias seguintes
-                    else if (!ptSessions.Contains(date))
+                    else if (dateTime.Date != DateTime.Today && !ptSessions.Contains(date))
                     {
                         RSGymUtility.WriteMessage($"({date.ToShortTimeString()}) ");
                         available = true;
@@ -221,7 +234,7 @@ namespace RSGymPT
                 
                 string answer = Console.ReadLine();
                 isDateTime = DateTime.TryParse(answer, out dateTime);
-                DateTime nextHour = dateTime.AddHours(1);
+                DateTime nextHour = DateTime.Now.AddHours(1);
 
                 if (!isDateTime)
                 {
@@ -234,7 +247,7 @@ namespace RSGymPT
                     isDateTime = false;
                     RSGymUtility.PauseConsole();
                 }
-                else if (dateTime.TimeOfDay < minTime.TimeOfDay || dateTime.TimeOfDay > maxTime.TimeOfDay || dateTime.TimeOfDay < nextHour.TimeOfDay)
+                else if (dateTime.TimeOfDay < minTime.TimeOfDay || dateTime.TimeOfDay > maxTime.TimeOfDay)
                 {
                     RSGymUtility.WriteMessage($"Agendamento de sessões das {minTime.TimeOfDay} ás {maxTime.TimeOfDay}.", "", "\n");
                     isDateTime = false;
@@ -253,7 +266,21 @@ namespace RSGymPT
             {
                 DateTime sessionDuration = order.TrainingDateTime.AddMinutes(50);
 
-                if (ptCode == order.PtCode && dateTime == order.TrainingDateTime && dateTime.TimeOfDay < sessionDuration.TimeOfDay)
+                if (ptCode == order.PtCode && dateTime == order.TrainingDateTime || ptCode == order.PtCode && dateTime == order.TrainingDateTime && dateTime < sessionDuration)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        internal static bool CheckUserAvailability(DateTime dateTime, int userId)
+        {
+            foreach (Order order in ordersList)
+            {
+                DateTime sessionDuration = order.TrainingDateTime.AddMinutes(50);
+
+                if (userId == order.UserId && dateTime == order.TrainingDateTime || userId == order.UserId && dateTime == order.TrainingDateTime && dateTime < sessionDuration)
                 {
                     return false;
                 }
@@ -263,6 +290,10 @@ namespace RSGymPT
 
         internal static void ListOrdersByUser(User user)
         {
+            Console.Clear();
+
+            RSGymUtility.WriteTitle("Orders - List", "\n", "\n\n");
+
             bool haveOrder = false;
 
             foreach (Order order in ordersList)
@@ -277,6 +308,7 @@ namespace RSGymPT
             if (!haveOrder)
             {
                 RSGymUtility.WriteMessage($"{user.Name}, você ainda não tem sessões agendadas.", "", "\n\n");
+                RSGymUtility.PauseConsole();
             }
             #endregion
 

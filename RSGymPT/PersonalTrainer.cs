@@ -138,10 +138,13 @@ namespace RSGymPT
 
             foreach (PersonalTrainer personalTrainer in personalTrainersList)
             {
-                RSGymUtility.WriteMessage(personalTrainer.FullPersonalTrainer, "", "\n");
+                RSGymUtility.WriteMessage(personalTrainer.FullPersonalTrainer, "", "\n\n");
             }
+
+            RSGymUtility.PauseConsole();
         }
 
+        
 
         #endregion
     }
