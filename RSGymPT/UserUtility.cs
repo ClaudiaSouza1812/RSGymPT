@@ -89,7 +89,18 @@ namespace RSGymPT
                                 } while (KeepGoing() == "s");
                                 break;
 
-                            case "Eliminar":
+                            case "Cancelar":
+                                do
+                                {
+                                    if (ordersList.Count == 0)
+                                    {
+                                        RSGymUtility.WriteMessage("Não existem pedidos para cancelar.", "", "\n");
+                                        RSGymUtility.PauseConsole();
+                                        break;
+                                    }
+                                    ordersList = Order.CancelOrder(ordersList, personalTrainersList, user);
+
+                                } while (KeepGoing() == "s");
                                 break;
 
                             case "Listar":
@@ -97,6 +108,17 @@ namespace RSGymPT
                                 break;
 
                             case "Terminar":
+                                do
+                                {
+                                    if (ordersList.Count == 0)
+                                    {
+                                        RSGymUtility.WriteMessage("Não existem pedidos para terminar.", "", "\n");
+                                        RSGymUtility.PauseConsole();
+                                        break;
+                                    }
+                                    ordersList = Order.FinishOrder(ordersList, personalTrainersList, user);
+
+                                } while (KeepGoing() == "s");
                                 break;
                         }
                         break;
@@ -176,7 +198,7 @@ namespace RSGymPT
                     {
                         {"1", "Registar" },
                         {"2", "Alterar" },
-                        {"3", "Eliminar" },
+                        {"3", "Cancelar" },
                         {"4", "Listar" },
                         {"5", "Terminar" }
                     }
