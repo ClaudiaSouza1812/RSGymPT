@@ -341,6 +341,8 @@ namespace RSGymPT
             ShowLogoMessage(status);
 
             Console.ForegroundColor = ConsoleColor.White;
+
+            RSGymUtility.TerminateConsole();
         }
 
         // Show RSGymPT logo message
