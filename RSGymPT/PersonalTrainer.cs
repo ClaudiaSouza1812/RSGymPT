@@ -88,7 +88,7 @@ namespace RSGymPT
             return personalTrainersList;
         }
 
-        // Method to find and show PTs
+        // Method to find PTs
         internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainersList, string userName) 
         {
             Console.Clear();
@@ -114,6 +114,7 @@ namespace RSGymPT
             return personalTrainer;
         }
 
+        // Method to show PTs
         internal static void ShowPersonalTrainer(PersonalTrainer personalTrainer)
         {
             if (personalTrainer != null)

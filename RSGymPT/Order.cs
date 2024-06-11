@@ -89,7 +89,7 @@ namespace RSGymPT
 
 
         #region Methods (public or internal)
-
+        // 
         internal static List<Order> CreateOrder(List<PersonalTrainer> personalTrainersList, User user) 
         {
             do
