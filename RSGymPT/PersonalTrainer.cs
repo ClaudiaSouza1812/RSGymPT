@@ -82,7 +82,7 @@ namespace RSGymPT
             {
                 new PersonalTrainer("Eduardo Cabrita", "999888777", "PT001"),
                 new PersonalTrainer("Perseu Antunes", "999777666", "PT002"),
-                new PersonalTrainer("Klaus Ofner", "999777666", "PT003")
+                new PersonalTrainer("Grada Ofner", "999777666", "PT003")
             };
 
             return personalTrainersList;
