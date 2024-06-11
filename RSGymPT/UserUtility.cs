@@ -11,9 +11,6 @@ namespace RSGymPT
     {
         internal static void RunRSGymProgram()
         {
-            // Show RSGymPT logo
-            ShowLogo("begin");
-
             // Show the login menu
             Dictionary<string, string> loginMenu = ShowLoginMenu();
 
@@ -24,7 +21,7 @@ namespace RSGymPT
             List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatepersonalTrainersList();
 
             // Create a new user
-            User user = null;
+            User user = new User();
 
             // Create a list of ordersList
             List<Order> ordersList = new List<Order>();
@@ -33,14 +30,14 @@ namespace RSGymPT
             string loginAction;
             int loginKey;
 
-            do
+            /*do
             {
                 loginKey = GetUserChoice("login");
                 loginAction = ValidateLoginMenu(loginMenu, loginKey);
 
                 if (loginAction == "Sair")
                 {
-                    ShowLogo("end");
+                    ShowLogo("end", user.Name);
                     RSGymUtility.TerminateConsole();
                     return;
                 }
@@ -51,15 +48,20 @@ namespace RSGymPT
                 }
 
             } while (loginAction != "Sair" && user == null);
-
             
-            Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu();
+
+            // Show RSGymPT logo
+            ShowLogo("begin", user.Name);
+            */
+
+            Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu(user.Name);
+            
             int menuKey;
             string[] menuAction;
 
             do
             {
-                menuKey = GetUserChoice("main");
+                menuKey = GetUserChoice("main", user.Name);
                 menuAction = ValidateMainMenu(mainMenu, menuKey);
 
                 switch (menuAction[0])
@@ -128,7 +130,7 @@ namespace RSGymPT
                             case "Pesquisar":
                                 do
                                 {
-                                    PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList);
+                                    PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList, user.Name);
                                     PersonalTrainer.ShowPersonalTrainer(personalTrainer);
 
                                 } while (KeepGoing() == "s");
@@ -150,7 +152,7 @@ namespace RSGymPT
                 }
             } while (menuAction[1] != "Logout");
 
-            ShowLogo("end");
+            ShowLogo("end", user.Name);
             
         }
 
@@ -186,11 +188,12 @@ namespace RSGymPT
         }
 
 
-        internal static Dictionary<string, Dictionary<string, string>> ShowMainMenu()
+        internal static Dictionary<string, Dictionary<string, string>> ShowMainMenu(string userName)
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("RSGymPT Main Menu", "", "\n\n");
+            RSGymUtility.WriteTitle("RSGymPT Menu de navegação", "", "\n\n");
+            RSGymUtility.WriteMessage($"{userName}, Digite o número da \nopção desejada e aperte 'Enter'", "", "\n\n");
 
             Dictionary<string, Dictionary<string, string>> mainMenu = new Dictionary<string, Dictionary<string, string>>()
             {
@@ -232,7 +235,7 @@ namespace RSGymPT
 
 
         // Get user menu number choice
-        internal static int GetUserChoice(string chosenMenu)
+        internal static int GetUserChoice(string chosenMenu, string userName)
         {
             int menuNumber;
             bool status;
@@ -240,7 +243,7 @@ namespace RSGymPT
             {
                 Console.Clear();
 
-                GetMenu(chosenMenu);
+                GetMenu(chosenMenu, userName);
 
                 RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
                 string answer = Console.ReadLine();
@@ -257,7 +260,7 @@ namespace RSGymPT
             return menuNumber;
         }
 
-        internal static void GetMenu(string menu)
+        internal static void GetMenu(string menu, string userName)
         {
             if (menu == "login")
             {
@@ -265,7 +268,7 @@ namespace RSGymPT
             }
             else
             {
-                ShowMainMenu();
+                ShowMainMenu(userName);
             }
         }
 
@@ -312,7 +315,7 @@ namespace RSGymPT
 
 
         // Show RSGymPT logo
-        internal static void ShowLogo(string status)
+        internal static void ShowLogo(string status, string userName)
         {
             Console.Clear();
 
@@ -338,18 +341,16 @@ namespace RSGymPT
                 RSGymUtility.WriteMessage($"{item}\n");
             }
 
-            ShowLogoMessage(status);
+            ShowLogoMessage(status, userName);
 
             Console.ForegroundColor = ConsoleColor.White;
-
-            RSGymUtility.TerminateConsole();
         }
 
         // Show RSGymPT logo message
-        internal static void ShowLogoMessage(string status)
+        internal static void ShowLogoMessage(string status, string userName)
         {
-            string message01 = "Bem vindo! Vamos treinar?";
-            string message02 = "Até a próxima!";
+            string message01 = $"Bem vindo(a)! {userName}!\n\tVamos treinar?";
+            string message02 = $"{userName}, até a próxima!";
 
             if (status == "begin")
             {
@@ -360,6 +361,8 @@ namespace RSGymPT
             else
             {
                 RSGymUtility.WriteMessage($"{message02.PadLeft(15 - (message02.Length / 2) + message02.Length, ' ')}", "", "\n");
+
+                RSGymUtility.TerminateConsole();
             }
         }
 

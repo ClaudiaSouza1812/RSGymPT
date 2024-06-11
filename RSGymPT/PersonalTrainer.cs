@@ -89,11 +89,12 @@ namespace RSGymPT
         }
 
         // Method to find and show PTs
-        internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainersList) 
+        internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainersList, string userName) 
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer", "", "\n\n");
+            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer (PT)", "", "\n\n");
+            RSGymUtility.WriteMessage($"{userName}, Digite o código do (PT)\ne aperte 'Enter'", "", "\n\n");
 
             string ptCode = AskPtCode();
 
@@ -137,7 +138,7 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Personal Trainers - List", "\n", "\n\n");
+            RSGymUtility.WriteTitle("Personal Trainers - Lista", "\n", "\n\n");
 
             foreach (PersonalTrainer personalTrainer in personalTrainersList)
             {

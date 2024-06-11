@@ -102,10 +102,6 @@ namespace RSGymPT
 
         internal static void CreateOrder(List<Order> ordersList, List<PersonalTrainer> personalTrainersList, User user, Order order) 
         {
-            Console.Clear();
-
-            RSGymUtility.WriteTitle("Registar Pedido de um PT", "", "\n\n");
-
             #region UserID
 
             order.UserId = user.UserId;
@@ -120,9 +116,10 @@ namespace RSGymPT
             {
                 Console.Clear();
 
-                RSGymUtility.WriteTitle("Registar Pedido de um PT", "", "\n\n");
+                RSGymUtility.WriteTitle("Registar Pedido de um Personal Trainer (PT)", "", "\n\n");
+                RSGymUtility.WriteMessage($"{user.Name}, Digite o número da \nopção desejada e aperte 'Enter'", "", "\n\n");
 
-                order.PtCode = GetPersonalTrainerCode(personalTrainersList);
+                order.PtCode = GetPersonalTrainerCode(personalTrainersList, user.Name);
 
                 order.TrainingDateTime = GetTrainingDateTime(order.PtCode);
 
@@ -145,12 +142,12 @@ namespace RSGymPT
 
         }
 
-        internal static string GetPersonalTrainerCode(List<PersonalTrainer> personalTrainersList)
+        internal static string GetPersonalTrainerCode(List<PersonalTrainer> personalTrainersList, string userName)
         {
             PersonalTrainer personalTrainer;
             do
             {
-                personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList);
+                personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList, userName);
 
             } while (personalTrainer == null);
 
@@ -179,33 +176,32 @@ namespace RSGymPT
             bool available = false;
             DateTime[] sessionsRange = CreateHoursRange(dateTime);
 
-            DateTime[] ptSessions = ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Date == dateTime.Date).Select(pt => pt.TrainingDateTime).ToArray();
+            DateTime[] ptSessions = ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Date == dateTime.Date && pt.OrderStatus == "Agendado").Select(pt => pt.TrainingDateTime).ToArray();
 
-            if (ptSessions.Length != 0)
+            
+            RSGymUtility.WriteMessage($"({ptCode}) Sessões disponíveis: {dateTime.ToShortDateString()}", "", "\n");
+
+            foreach (DateTime date in sessionsRange)
             {
-                RSGymUtility.WriteMessage($"({ptCode}) Sessões disponíveis: {dateTime.ToShortDateString()}", "", "\n");
-
-                foreach (DateTime date in sessionsRange)
+                // tratar sessões do mesmo dia
+                if (dateTime.Date == DateTime.Today && !ptSessions.Contains(date) && date.TimeOfDay > DateTime.Now.TimeOfDay)
                 {
-                    // tratar sessões do mesmo dia
-                    if (dateTime.Date == DateTime.Today && !ptSessions.Contains(date) && date.TimeOfDay > DateTime.Now.TimeOfDay)
-                    {
-                        RSGymUtility.WriteMessage($"({date.ToShortTimeString()}) ");
-                        available = true;
-                    }
-                    // tratar sessões dos dias seguintes
-                    else if (dateTime.Date != DateTime.Today && !ptSessions.Contains(date))
-                    {
-                        RSGymUtility.WriteMessage($"({date.ToShortTimeString()}) ");
-                        available = true;
-                    }
+                    RSGymUtility.WriteMessage($"({date.ToShortTimeString()}) ");
+                    available = true;
                 }
-
-                if (!available)
+                // tratar sessões dos dias seguintes
+                else if (dateTime.Date != DateTime.Today && !ptSessions.Contains(date))
                 {
-                    RSGymUtility.WriteMessage("Nenhuma sessão disponível para hoje.", "", "\n");
+                    RSGymUtility.WriteMessage($"({date.ToShortTimeString()}) ");
+                    available = true;
                 }
             }
+
+            if (!available)
+            {
+                RSGymUtility.WriteMessage("Nenhuma sessão disponível para hoje.", "", "\n");
+            }
+            
         }
 
         internal static DateTime GetTrainingDateTime(string ptCode)
@@ -218,7 +214,7 @@ namespace RSGymPT
             {
                 Console.Clear();
 
-                RSGymUtility.WriteTitle("Registar Pedido de um PT", "", "\n\n");
+                RSGymUtility.WriteTitle("Registar Pedido de um Personal trainer (PT)", "", "\n\n");
                 RSGymUtility.WriteTitle("Data e Hora da Sessão", "", "\n\n");
 
                 ShowPersonalTrainerAvailableSessions(ordersList, ptCode, DateTime.Now);
@@ -260,7 +256,7 @@ namespace RSGymPT
             {
                 DateTime sessionDuration = order.TrainingDateTime.AddMinutes(50);
 
-                if (ptCode == order.PtCode && dateTime == order.TrainingDateTime || ptCode == order.PtCode && dateTime == order.TrainingDateTime && dateTime < sessionDuration)
+                if (ptCode == order.PtCode && dateTime == order.TrainingDateTime && order.OrderStatus != "Cancelado" || ptCode == order.PtCode && dateTime == order.TrainingDateTime && order.OrderStatus != "Cancelado" && dateTime < sessionDuration)
                 {
                     ShowPersonalTrainerAvailableSessions(ordersList, order.PtCode, order.TrainingDateTime);
                     RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n", "\n");
@@ -277,7 +273,7 @@ namespace RSGymPT
             {
                 DateTime sessionDuration = order.TrainingDateTime.AddMinutes(50);
 
-                if (user.UserId == order.UserId && dateTime == order.TrainingDateTime || user.UserId == order.UserId && dateTime == order.TrainingDateTime && dateTime < sessionDuration)
+                if (user.UserId == order.UserId && dateTime == order.TrainingDateTime && order.OrderStatus != "Cancelado" || user.UserId == order.UserId && dateTime == order.TrainingDateTime && order.OrderStatus != "Cancelado" && dateTime < sessionDuration)
                 {
                     ListOrdersByUser(user);
                     RSGymUtility.WriteMessage("Você já tem uma sessão agendada nesta data e horário, escolha outra Data e hora.", "", "\n");
@@ -296,7 +292,7 @@ namespace RSGymPT
             {
                 ListBookedOrders(ordersList, user);
 
-                RSGymUtility.WriteTitle("Change Orders", "\n", "\n\n");
+                RSGymUtility.WriteTitle("Alterar pedidos", "\n", "\n\n");
 
                 RSGymUtility.WriteMessage("Insira o número do pedido que deseja alterar: ", "", "\n");
 
@@ -313,7 +309,7 @@ namespace RSGymPT
                 }
                 else
                 {
-                    order.PtCode = GetPersonalTrainerCode(personalTrainersList);
+                    order.PtCode = GetPersonalTrainerCode(personalTrainersList, user.Name);
 
                     order.TrainingDateTime = GetTrainingDateTime(order.PtCode);
 
@@ -339,7 +335,7 @@ namespace RSGymPT
             {
                 ListBookedOrders(ordersList, user);
 
-                RSGymUtility.WriteTitle("Cancel Orders", "\n", "\n\n");
+                RSGymUtility.WriteTitle("Cancelar pedidos", "\n", "\n\n");
 
                 RSGymUtility.WriteMessage("Insira o número do pedido que deseja cancelar: ", "", "\n");
 
@@ -372,7 +368,7 @@ namespace RSGymPT
             {
                 ListBookedOrders(ordersList, user);
 
-                RSGymUtility.WriteTitle("Finish Orders", "\n", "\n\n");
+                RSGymUtility.WriteTitle("Terminar Pedidos", "\n", "\n\n");
 
                 RSGymUtility.WriteMessage("Insira o número do pedido que deseja finalizar: ", "", "\n");
 
@@ -402,7 +398,7 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Booked Orders", "\n", "\n\n");
+            RSGymUtility.WriteTitle("Pedidos registados", "\n", "\n\n");
 
             foreach (Order order in ordersList)
             {
@@ -418,7 +414,7 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Orders - List", "\n", "\n\n");
+            RSGymUtility.WriteTitle("Pedidos - Lista", "\n", "\n\n");
 
             bool haveOrder = false;
 

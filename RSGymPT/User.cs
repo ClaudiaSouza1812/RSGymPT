@@ -101,8 +101,8 @@ namespace RSGymPT
         {
             List<User> usersList = new List<User>()
             {
-                new User("Claudia Simone de Souza", new DateTime(1992, 12, 18), "clasi", "12345678"),
-                new User("Paula de Fátima Vallim Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321")
+                new User("Claudia Souza", new DateTime(1992, 12, 18), "clasi", "12345678"),
+                new User("Paula Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321")
             };
 
             return usersList;
@@ -188,7 +188,7 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Users - List", "\n", "\n\n");
+            RSGymUtility.WriteTitle("Utilizadores - Lista", "\n", "\n\n");
 
             foreach (User user in list)
             {
