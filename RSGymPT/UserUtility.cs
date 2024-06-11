@@ -21,24 +21,23 @@ namespace RSGymPT
             List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatepersonalTrainersList();
 
             // Create a new user
-            User user = new User();
+            User user = null;
 
             // Create a list of ordersList
             List<Order> ordersList = new List<Order>();
 
-
+            
             string loginAction;
             int loginKey;
 
-            /*do
+            do
             {
-                loginKey = GetUserChoice("login");
+                loginKey = GetUserChoice("login", string.Empty);
                 loginAction = ValidateLoginMenu(loginMenu, loginKey);
 
                 if (loginAction == "Sair")
                 {
-                    ShowLogo("end", user.Name);
-                    RSGymUtility.TerminateConsole();
+                    ShowLogo("end", "Obrigada");
                     return;
                 }
 
@@ -49,10 +48,9 @@ namespace RSGymPT
 
             } while (loginAction != "Sair" && user == null);
             
-
             // Show RSGymPT logo
             ShowLogo("begin", user.Name);
-            */
+            
 
             Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu(user.Name);
             
@@ -70,57 +68,42 @@ namespace RSGymPT
                         switch (menuAction[1]) 
                         {
                             case "Registar":
-                                do
-                                {
-                                    ordersList = Order.AddOrder(personalTrainersList, user);
-
-                                } while (KeepGoing() == "s");
+                                ordersList = Order.CreateOrder(personalTrainersList, user);
                                 break;
 
                             case "Alterar":
-                                do
+                                if (ordersList.Count == 0)
                                 {
-                                    if (ordersList.Count == 0)
-                                    {
-                                        RSGymUtility.WriteMessage("Não existem pedidos para alterar.", "", "\n");
-                                        RSGymUtility.PauseConsole();
-                                        break;
-                                    }
-                                    ordersList = Order.ChangeOrder(ordersList, personalTrainersList, user);
-
-                                } while (KeepGoing() == "s");
+                                    RSGymUtility.WriteMessage("Não existem pedidos para alterar.", "", "\n");
+                                    RSGymUtility.PauseConsole();
+                                    break;
+                                }
+                                ordersList = Order.ChangeOrder(ordersList, personalTrainersList, user);
                                 break;
 
                             case "Cancelar":
-                                do
+                                if (ordersList.Count == 0)
                                 {
-                                    if (ordersList.Count == 0)
-                                    {
-                                        RSGymUtility.WriteMessage("Não existem pedidos para cancelar.", "", "\n");
-                                        RSGymUtility.PauseConsole();
-                                        break;
-                                    }
-                                    ordersList = Order.CancelOrder(ordersList, personalTrainersList, user);
-
-                                } while (KeepGoing() == "s");
+                                    RSGymUtility.WriteMessage("Não existem pedidos para cancelar.", "", "\n");
+                                    RSGymUtility.PauseConsole();
+                                    break;
+                                }
+                                ordersList = Order.CancelOrder(ordersList, personalTrainersList, user);
                                 break;
 
                             case "Listar":
                                 Order.ListOrdersByUser(user);
+                                KeepGoing();
                                 break;
 
                             case "Terminar":
-                                do
+                                if (ordersList.Count == 0)
                                 {
-                                    if (ordersList.Count == 0)
-                                    {
-                                        RSGymUtility.WriteMessage("Não existem pedidos para terminar.", "", "\n");
-                                        RSGymUtility.PauseConsole();
-                                        break;
-                                    }
-                                    ordersList = Order.FinishOrder(ordersList, personalTrainersList, user);
-
-                                } while (KeepGoing() == "s");
+                                    RSGymUtility.WriteMessage("Não existem pedidos para terminar.", "", "\n");
+                                    RSGymUtility.PauseConsole();
+                                    break;
+                                }
+                                ordersList = Order.FinishOrder(ordersList, personalTrainersList, user);
                                 break;
                         }
                         break;
@@ -290,7 +273,7 @@ namespace RSGymPT
 
             RSGymUtility.PauseConsole();
 
-            return string.Empty;
+            return "Error";
         }
 
         internal static string[] ValidateMainMenu(Dictionary<string, Dictionary<string, string>> mainMenu, int menuKey)

@@ -188,7 +188,7 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Utilizadores - Lista", "\n", "\n\n");
+            RSGymUtility.WriteTitle("Lista de Utilizadores", "\n", "\n\n");
 
             foreach (User user in list)
             {
