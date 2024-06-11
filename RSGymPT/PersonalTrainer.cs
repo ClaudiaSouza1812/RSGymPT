@@ -93,13 +93,7 @@ namespace RSGymPT
         {
             Console.Clear();
 
-            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer (PT)", "", "\n\n");
-            RSGymUtility.WriteMessage($"{userName}, Digite o código de um dos\n(PT) disponíveis abaixo e aperte 'Enter'", "", "\n\n");
-
-            foreach (PersonalTrainer pt in personalTrainersList)
-            {
-                RSGymUtility.WriteMessage($"({pt.PtCode}) - {pt.FullName}, ");
-            }
+            ShowPersonalTrainer(personalTrainersList, userName);
 
             string ptCode = AskPtCode();
 
@@ -114,13 +108,25 @@ namespace RSGymPT
             return personalTrainer;
         }
 
-        // Method to show PTs
+        // Method to show full PT
         internal static void ShowPersonalTrainer(PersonalTrainer personalTrainer)
         {
             if (personalTrainer != null)
             {
                 RSGymUtility.WriteMessage($"{personalTrainer.FullPersonalTrainer}", "\n", "\n");
             }   
+        }
+
+        // Method to show all PTs
+        internal static void ShowPersonalTrainer(List<PersonalTrainer> personalTrainersList, string userName)
+        {
+            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer (PT)", "", "\n\n");
+            RSGymUtility.WriteMessage($"{userName}, Digite o código de um dos\n(PT) disponíveis abaixo e aperte 'Enter'", "", "\n\n");
+
+            foreach (PersonalTrainer pt in personalTrainersList)
+            {
+                RSGymUtility.WriteMessage($"({pt.PtCode}) - {pt.FullName}, ");
+            }
         }
 
         // Function to ask and return the PT code
