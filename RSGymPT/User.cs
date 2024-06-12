@@ -97,7 +97,7 @@ namespace RSGymPT
         #region Methods (public or internal)
 
         // Function to create and return 2 initial usersList
-        internal static List<User> CreateusersList()
+        internal static List<User> CreateUsersList()
         {
             List<User> usersList = new List<User>()
             {
@@ -122,6 +122,8 @@ namespace RSGymPT
         // Function to login and return the user
         internal static User LogInUser(List<User> usersList)
         {
+            RSGymUtility.WriteTitle("Login", "", "\n\n");
+
             string userName = AskUserName();
 
             if (!CheckUserName(usersList, userName))
@@ -150,10 +152,6 @@ namespace RSGymPT
         // Function to ask and return the user username
         internal static string AskUserName()
         {
-            Console.Clear();
-
-            RSGymUtility.WriteTitle("Login", "", "\n\n");
-
             RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
 
             string userName = Console.ReadLine().ToLower();
@@ -183,7 +181,7 @@ namespace RSGymPT
             return user;
         }
 
-        // Method to list usersList properties
+        // Method to list users properties
         internal static void ListUser(List<User> list) 
         {
             Console.Clear();

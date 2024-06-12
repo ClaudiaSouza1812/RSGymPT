@@ -88,12 +88,15 @@ namespace RSGymPT
             return personalTrainersList;
         }
 
-        // Method to find PTs
+        // Function to find and return PTs
         internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainersList, string userName) 
         {
             Console.Clear();
 
-            ShowPersonalTrainer(personalTrainersList, userName);
+            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer (PT)", "", "\n\n");
+            RSGymUtility.WriteMessage($"{userName}, Digite o código de um dos\n(PT) disponíveis abaixo e aperte 'Enter'", "", "\n\n");
+
+            ShowPersonalTrainerCode(personalTrainersList);
 
             string ptCode = AskPtCode();
 
@@ -106,27 +109,6 @@ namespace RSGymPT
             }
 
             return personalTrainer;
-        }
-
-        // Method to show full PT
-        internal static void ShowPersonalTrainer(PersonalTrainer personalTrainer)
-        {
-            if (personalTrainer != null)
-            {
-                RSGymUtility.WriteMessage($"{personalTrainer.FullPersonalTrainer}", "\n", "\n");
-            }   
-        }
-
-        // Method to show all PTs
-        internal static void ShowPersonalTrainer(List<PersonalTrainer> personalTrainersList, string userName)
-        {
-            RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer (PT)", "", "\n\n");
-            RSGymUtility.WriteMessage($"{userName}, Digite o código de um dos\n(PT) disponíveis abaixo e aperte 'Enter'", "", "\n\n");
-
-            foreach (PersonalTrainer pt in personalTrainersList)
-            {
-                RSGymUtility.WriteMessage($"({pt.PtCode}) - {pt.FullName}, ");
-            }
         }
 
         // Function to ask and return the PT code
@@ -145,8 +127,26 @@ namespace RSGymPT
             return personalTrainer;
         }
 
-        // Method to list personal trainers properties
-        internal static void ListpersonalTrainersList(List<PersonalTrainer> personalTrainersList)
+        // Method to show the full PT
+        internal static void ShowFullPersonalTrainer(PersonalTrainer personalTrainer)
+        {
+            if (personalTrainer != null)
+            {
+                RSGymUtility.WriteMessage($"{personalTrainer.FullPersonalTrainer}", "\n", "\n");
+            }   
+        }
+
+        // Method to show all PTs code from a list
+        internal static void ShowPersonalTrainerCode(List<PersonalTrainer> personalTrainersList)
+        {
+            foreach (PersonalTrainer pt in personalTrainersList)
+            {
+                RSGymUtility.WriteMessage($"({pt.PtCode}) ");
+            }
+        }
+
+        // Method to list all PTs from a list
+        internal static void ListPersonalTrainers(List<PersonalTrainer> personalTrainersList)
         {
             Console.Clear();
 
@@ -160,7 +160,6 @@ namespace RSGymPT
         }
 
         
-
         #endregion
     }
 }

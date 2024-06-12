@@ -1,35 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Internal;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utility;
+using static System.Collections.Specialized.BitVector32;
 
 namespace RSGymPT
 {
     internal class UserUtility
     {
+        // Create 2 inicial users
+        private static List<User> usersList = User.CreateUsersList();
+
+        // Create 3 initial PTs
+        private static List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatepersonalTrainersList();
+
+        // Create a new user
+        private static User user = null;
+
+        // Create a list of orders
+        private static List<Order> ordersList = new List<Order>();
+
+        // Run the RSGymPT program
         internal static void RunRSGymProgram()
+        {
+            RunLoginMenu();
+        }
+
+        // Method to run the login menu
+        internal static void RunLoginMenu()
         {
             // Show the login menu
             Dictionary<string, string> loginMenu = ShowLoginMenu();
 
-            // Create inicial 2 usersList
-            List<User> usersList = User.CreateusersList();
-
-            // Create initial 3 PTs
-            List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatepersonalTrainersList();
-
-            // Create a new user
-            User user = null;
-
-            // Create a list of ordersList
-            List<Order> ordersList = new List<Order>();
-
-            
             string loginAction;
             int loginKey;
-
+            
             do
             {
                 loginKey = GetUserChoice("login", string.Empty);
@@ -47,13 +55,20 @@ namespace RSGymPT
                 }
 
             } while (loginAction != "Sair" && user == null);
-            
-            // Show RSGymPT logo
-            ShowLogo("begin", user.Name);
-            
 
+            // Show the RSGymPT logo
+            ShowLogo("begin", user.Name);
+
+            // Run the main menu
+            RunMainMenu();
+        }
+
+        // Method to run the main menu
+        internal static void RunMainMenu()
+        {
+            // Show the main menu
             Dictionary<string, Dictionary<string, string>> mainMenu = ShowMainMenu(user.Name);
-            
+
             int menuKey;
             string[] menuAction;
 
@@ -65,63 +80,10 @@ namespace RSGymPT
                 switch (menuAction[0])
                 {
                     case "Pedido":
-                        switch (menuAction[1]) 
-                        {
-                            case "Registar":
-                                ordersList = Order.CreateOrder(personalTrainersList, user);
-                                break;
-
-                            case "Alterar":
-                                if (ordersList.Count == 0)
-                                {
-                                    RSGymUtility.WriteMessage("Não existem pedidos para alterar.", "", "\n");
-                                    RSGymUtility.PauseConsole();
-                                    break;
-                                }
-                                ordersList = Order.ChangeOrder(ordersList, personalTrainersList, user);
-                                break;
-
-                            case "Cancelar":
-                                if (ordersList.Count == 0)
-                                {
-                                    RSGymUtility.WriteMessage("Não existem pedidos para cancelar.", "", "\n");
-                                    RSGymUtility.PauseConsole();
-                                    break;
-                                }
-                                ordersList = Order.CancelOrder(ordersList, personalTrainersList, user);
-                                break;
-
-                            case "Listar":
-                                Order.ListOrdersByUser(user);
-                                KeepGoing();
-                                break;
-
-                            case "Terminar":
-                                if (ordersList.Count == 0)
-                                {
-                                    RSGymUtility.WriteMessage("Não existem pedidos para terminar.", "", "\n");
-                                    RSGymUtility.PauseConsole();
-                                    break;
-                                }
-                                ordersList = Order.FinishOrder(ordersList, personalTrainersList, user);
-                                break;
-                        }
+                        RunOrderSubmenu(menuAction[1]);
                         break;
                     case "Personal Trainer":
-                        switch (menuAction[1])
-                        {
-                            case "Pesquisar":
-                                do
-                                {
-                                    PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList, user.Name);
-                                    PersonalTrainer.ShowPersonalTrainer(personalTrainer);
-
-                                } while (KeepGoing() == "s");
-                                break;
-                            case "Listar":
-                                PersonalTrainer.ListpersonalTrainersList(personalTrainersList);
-                                break;
-                        }
+                        RunPersonalTrainerSubmenu(menuAction[1]);
                         break;
                     case "Utilizador":
                         if (menuAction[1] == "Listar")
@@ -129,27 +91,101 @@ namespace RSGymPT
                             User.ListUser(usersList);
                         }
                         break;
-                default:
-                    RSGymUtility.WriteMessage("Escolha um número válido.");
-                    break;
+                    default:
+                        RSGymUtility.WriteMessage("Escolha um número válido.");
+                        break;
                 }
             } while (menuAction[1] != "Logout");
 
             ShowLogo("end", user.Name);
-            
         }
 
-
-        internal static string KeepGoing()
+        // Method to run the order menu
+        internal static void RunOrderSubmenu(string menuAction)
         {
-            RSGymUtility.WriteMessage("Continuar? (s/n): ", "\n");
-            string answer = Console.ReadLine().ToLower();
+            switch (menuAction)
+            {
+                case "Registar":
+                    ordersList = Order.CreateOrder(personalTrainersList, user);
+                    break;
 
-            return answer;
+                case "Alterar":
+                    if (ValidateOrderList("Alterar"))
+                    {
+                        ordersList = Order.ChangeOrder(ordersList, personalTrainersList, user);
+                    };
+                    break;
+                case "Eliminar":
+                    if (ValidateOrderList("Eliminar"))
+                    {
+                        ordersList = Order.CancelOrder(ordersList, personalTrainersList, user);
+                    }
+                    break;
+                case "Listar":
+                    Order.ListOrdersByUser(user);
+                    KeepGoing();
+                    break;
+
+                case "Terminar":
+                    if (ValidateOrderList("Terminar"))
+                    {
+                        ordersList = Order.FinishOrder(ordersList, personalTrainersList, user);
+                    }
+                    break;
+            }
         }
 
+        internal static bool ValidateOrderList(string action)
+        {
+            bool status = false;
 
+            if (ordersList.Count == 0)
+            {
+                switch (action)
+                {
+                    case "Alterar":
+                        RSGymUtility.WriteMessage("Não existem pedidos para alterar.", "", "\n");
+                        RSGymUtility.PauseConsole();
+                        break;
+                    case "Eliminar":
+                        RSGymUtility.WriteMessage("Não existem pedidos para eliminar.", "", "\n");
+                        RSGymUtility.PauseConsole();
+                        break;
+                    case "Terminar":
+                        RSGymUtility.WriteMessage("Não existem pedidos para terminar.", "", "\n");
+                        RSGymUtility.PauseConsole();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                status = true;
+            }
+            return status;
+        }
 
+        // Method to run the personal trainer menu
+        internal static void RunPersonalTrainerSubmenu(string menuAction)
+        {
+            switch (menuAction)
+            {
+                case "Pesquisar":
+                    do
+                    {
+                        PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList, user.Name);
+                        PersonalTrainer.ShowFullPersonalTrainer(personalTrainer);
+
+                    } while (KeepGoing() == "s");
+                    break;
+                case "Listar":
+                    PersonalTrainer.ListPersonalTrainers(personalTrainersList);
+                    break;
+            }
+        }
+
+        // Function to show and return the login menu
         internal static Dictionary<string, string> ShowLoginMenu()
         {
             Console.Clear();
@@ -184,7 +220,7 @@ namespace RSGymPT
                     {
                         {"1", "Registar" },
                         {"2", "Alterar" },
-                        {"3", "Cancelar" },
+                        {"3", "Eliminar" },
                         {"4", "Listar" },
                         {"5", "Terminar" }
                     }
@@ -273,7 +309,7 @@ namespace RSGymPT
 
             RSGymUtility.PauseConsole();
 
-            return "Error";
+            return string.Empty;
         }
 
         internal static string[] ValidateMainMenu(Dictionary<string, Dictionary<string, string>> mainMenu, int menuKey)
@@ -347,6 +383,14 @@ namespace RSGymPT
 
                 RSGymUtility.TerminateConsole();
             }
+        }
+
+        internal static string KeepGoing()
+        {
+            RSGymUtility.WriteMessage("Continuar? (s/n): ", "\n");
+            string answer = Console.ReadLine().ToLower();
+
+            return answer;
         }
 
     }
