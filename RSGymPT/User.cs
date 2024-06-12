@@ -182,11 +182,12 @@ namespace RSGymPT
         }
 
         // Method to list users properties
-        internal static void ListUser(List<User> list) 
+        internal static void ListUser(List<User> list, string userName) 
         {
             Console.Clear();
 
             RSGymUtility.WriteTitle("Lista de Utilizadores", "\n", "\n\n");
+            RSGymUtility.WriteMessage($"{userName}, Utilizadores cadastrados: ", "", "\n\n");
 
             foreach (User user in list)
             {

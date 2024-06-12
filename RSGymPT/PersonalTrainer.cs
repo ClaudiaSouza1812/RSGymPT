@@ -146,11 +146,12 @@ namespace RSGymPT
         }
 
         // Method to list all PTs from a list
-        internal static void ListPersonalTrainers(List<PersonalTrainer> personalTrainersList)
+        internal static void ListPersonalTrainers(List<PersonalTrainer> personalTrainersList, User user)
         {
             Console.Clear();
 
             RSGymUtility.WriteTitle("Lista de Personal Trainers", "\n", "\n\n");
+            RSGymUtility.WriteMessage($"{user.Name}, Personal Trainers disponíveis: ", "", "\n\n");
 
             foreach (PersonalTrainer personalTrainer in personalTrainersList)
             {

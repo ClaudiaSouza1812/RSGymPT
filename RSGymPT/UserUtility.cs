@@ -88,7 +88,7 @@ namespace RSGymPT
                     case "Utilizador":
                         if (menuAction[1] == "Listar")
                         {
-                            User.ListUser(usersList);
+                            User.ListUser(usersList, user.Name);
                         }
                         break;
                     default:
@@ -108,7 +108,6 @@ namespace RSGymPT
                 case "Registar":
                     ordersList = Order.CreateOrder(personalTrainersList, user);
                     break;
-
                 case "Alterar":
                     if (ValidateOrderList("Alterar"))
                     {
@@ -118,7 +117,7 @@ namespace RSGymPT
                 case "Eliminar":
                     if (ValidateOrderList("Eliminar"))
                     {
-                        ordersList = Order.CancelOrder(ordersList, personalTrainersList, user);
+                        ordersList = Order.DeleteOrder(ordersList, personalTrainersList, user);
                     }
                     break;
                 case "Listar":
@@ -177,10 +176,10 @@ namespace RSGymPT
                         PersonalTrainer personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList, user.Name);
                         PersonalTrainer.ShowFullPersonalTrainer(personalTrainer);
 
-                    } while (KeepGoing() == "s");
+                    } while (KeepGoing());
                     break;
                 case "Listar":
-                    PersonalTrainer.ListPersonalTrainers(personalTrainersList);
+                    PersonalTrainer.ListPersonalTrainers(personalTrainersList, user);
                     break;
             }
         }
@@ -385,14 +384,20 @@ namespace RSGymPT
             }
         }
 
-        internal static string KeepGoing()
+        internal static bool KeepGoing()
         {
             RSGymUtility.WriteMessage("Continuar? (s/n): ", "\n");
             string answer = Console.ReadLine().ToLower();
-
-            return answer;
+            
+            if (answer == "s")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-
     }
 }
 
