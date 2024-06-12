@@ -101,9 +101,6 @@ namespace RSGymPT
         {
             do
             {
-                bool userIsAvailable = false;
-                bool ptIsAvailable = false;
-
                 Order order = new Order();
                 order.UserId = user.UserId;
 
@@ -114,16 +111,16 @@ namespace RSGymPT
 
                 order.PtCode = GetPersonalTrainerCode(personalTrainersList, user.Name);
 
-                order.TrainingDateTime = GetTrainingDateTime(order.PtCode, user);
+                DateTime? trainingDateTime = GetTrainingDateTime(order.PtCode, user);
 
-                userIsAvailable = CheckUserAvailability(order.TrainingDateTime, user);
-
-                if (userIsAvailable)
+                if (trainingDateTime == null)
                 {
-                    ptIsAvailable = CheckPtAvailability(order.TrainingDateTime, order.PtCode);
+                    return ordersList;
                 }
 
-                if (ptIsAvailable)
+                order.TrainingDateTime = trainingDateTime.Value;
+
+                if (CheckUserAvailability(order.TrainingDateTime, user) && CheckPtAvailability(order.TrainingDateTime, order.PtCode))
                 {
                     order.OrderStatus = orderStatusOptions.Values.ElementAt(0);
 
@@ -229,12 +226,12 @@ namespace RSGymPT
 
         }
 
-        internal static DateTime GetTrainingDateTime(string ptCode, User user)
+        internal static DateTime? GetTrainingDateTime(string ptCode, User user)
         {
             DateTime dateTime;
             DateTime minTime = DateTime.Today.AddHours(9);
             DateTime maxTime = DateTime.Today.AddHours(21);
-            bool isDateTime;
+            bool isDateTime = false;
             do
             {
                 Console.Clear();
@@ -253,7 +250,10 @@ namespace RSGymPT
                 if (!isDateTime)
                 {
                     RSGymUtility.WriteMessage("Data inválida. Inserir data e hora conforme informado acima.", "", "\n");
-                    UserUtility.KeepGoing();
+                    if (!UserUtility.KeepGoing())
+                    { 
+                        return null;
+                    };
                 }
                 else if (dateTime < DateTime.Now)
                 {
@@ -265,22 +265,27 @@ namespace RSGymPT
                     {
                         RSGymUtility.WriteMessage($"Agendamento de sessões das {minTime.TimeOfDay} ás {maxTime.TimeOfDay}.", "", "\n");
                     }
-                    UserUtility.KeepGoing();
-                    isDateTime = false;
+                    if (!UserUtility.KeepGoing())
+                    {
+                        return null;
+                    };
                 }
                 else if (dateTime.TimeOfDay < minTime.TimeOfDay || dateTime.TimeOfDay > maxTime.TimeOfDay)
                 {
                     RSGymUtility.WriteMessage($"Agendamento de sessões das {minTime.TimeOfDay} ás {maxTime.TimeOfDay}.", "", "\n");
-                    isDateTime = false;
-                    UserUtility.KeepGoing();
+                    if (!UserUtility.KeepGoing())
+                    {
+                        return null;
+                    };
                 }
                 else if (dateTime.Minute != 0)
                 {
                     RSGymUtility.WriteMessage("Por favor, insira uma hora cheia (ex: 10:00).", "", "\n");
-                    UserUtility.KeepGoing();
-                    isDateTime = false;
+                    if (!UserUtility.KeepGoing())
+                    {
+                        return null;
+                    };
                 }
-
             } while (!isDateTime);
             
             return dateTime;
@@ -361,21 +366,18 @@ namespace RSGymPT
                 }
                 else
                 {
-                    bool ptIsAvailable = false;
-                    bool userIsAvailable = false;
-
                     order.PtCode = GetPersonalTrainerCode(personalTrainersList, user.Name);
 
-                    order.TrainingDateTime = GetTrainingDateTime(order.PtCode, user);
+                    DateTime? trainingDateTime = GetTrainingDateTime(order.PtCode, user);
 
-                    userIsAvailable = CheckUserAvailability(order.TrainingDateTime, user);
-
-                    if (userIsAvailable)
+                    if (trainingDateTime == null)
                     {
-                        ptIsAvailable = CheckPtAvailability(order.TrainingDateTime, order.PtCode);
+                        return ordersList;
                     }
 
-                    if (ptIsAvailable)
+                    order.TrainingDateTime = trainingDateTime.Value;
+
+                    if (CheckUserAvailability(order.TrainingDateTime, user) && CheckPtAvailability(order.TrainingDateTime, order.PtCode))
                     {
                         order.OrderStatus = orderStatusOptions.Values.ElementAt(0);
 
