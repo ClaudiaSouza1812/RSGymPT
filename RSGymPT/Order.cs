@@ -111,6 +111,11 @@ namespace RSGymPT
 
                 order.PtCode = GetPersonalTrainerCode(personalTrainersList, user.Name);
 
+                if (order.PtCode == null)
+                {
+                    return ordersList;
+                }
+
                 DateTime? trainingDateTime = GetTrainingDateTime(order.PtCode, user);
 
                 if (trainingDateTime == null)
@@ -139,11 +144,25 @@ namespace RSGymPT
         internal static string GetPersonalTrainerCode(List<PersonalTrainer> personalTrainersList, string userName)
         {
             PersonalTrainer personalTrainer;
+            bool keepGoing = false;
             do
             {
                 personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList, userName);
+                if (personalTrainer == null)
+                {
+                    keepGoing = UserUtility.KeepGoing();
+                }
+                else
+                {
+                    keepGoing = false;
+                }
 
-            } while (personalTrainer == null);
+            } while (keepGoing);
+
+            if (personalTrainer == null)
+            {
+                return null;
+            }
 
             return personalTrainer.PtCode;
         }
@@ -174,7 +193,7 @@ namespace RSGymPT
             DateTime[] ptSessions = ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Date == dateTime.Date && pt.OrderStatus == "Agendado").Select(pt => pt.TrainingDateTime).ToArray();
 
             
-            RSGymUtility.WriteMessage($"({ptCode}) - {ptCode} Sessões disponíveis: {dateTime.ToShortDateString()}", "\n", "\n");
+            RSGymUtility.WriteMessage($"({ptCode}) - Sessões disponíveis: {dateTime.ToShortDateString()}", "\n", "\n");
 
             foreach (DateTime session in sessionsRange)
             {
@@ -343,63 +362,76 @@ namespace RSGymPT
             }
         }
 
+
         internal static List<Order> ChangeOrder(List<Order> ordersList, List<PersonalTrainer> personalTrainersList, User user)
         {
             bool isNumber;
+            bool keepGoing = true;
+            string answer;
+            Order order;
             do
             {
-                ListBookedOrders(ordersList, user);
-
-                RSGymUtility.WriteTitle("Alterar pedidos", "\n", "\n\n");
-                RSGymUtility.WriteMessage($"{user.Name}, Digite o código pedido\ne aperte 'Enter'", "", "\n\n");
-
-                RSGymUtility.WriteMessage("Insira o número do pedido que deseja alterar: ", "", "\n");
-
-                string answer = Console.ReadLine();
-
-                isNumber = int.TryParse(answer, out int orderNumber);
-
-                Order order = ordersList.FirstOrDefault(o => o.OrderId == orderNumber);
-
-                if (!isNumber || order == null)
+                do
                 {
-                    RSGymUtility.WriteMessage("Número inválido.", "", "\n");
-                    RSGymUtility.PauseConsole();
-                }
-                else
-                {
-                    bool isValid = false;
-                    bool keepGoing = true;
-                    string action;
-                    do
+                    Console.Clear();
+
+                    ShowBookedOrders(ordersList, user, orderStatusOptions.Values.ElementAt(0));
+
+                    RSGymUtility.WriteTitle("Alterar pedidos", "\n", "\n\n");
+                    RSGymUtility.WriteMessage($"{user.Name}, Digite o código pedido\ne aperte 'Enter'", "", "\n\n");
+
+                    RSGymUtility.WriteMessage("Número: ", "", "");
+
+                    answer = Console.ReadLine();
+
+                    isNumber = int.TryParse(answer, out int orderNumber);
+
+                    order = ordersList.FirstOrDefault(o => o.OrderId == orderNumber);
+
+                    if (!isNumber || order == null)
                     {
-                        Console.Clear();
-                        RSGymUtility.WriteTitle("Alterar pedidos", "\n", "\n\n");
-                        RSGymUtility.WriteMessage($"{user.Name}, insira o número do que deseja alterar no pedido", "", "\n\n");
+                        RSGymUtility.WriteMessage("Número inválido.", "", "\n");
+                        keepGoing = UserUtility.KeepGoing();
+                    }
+                } while (!isNumber && keepGoing);
+                
 
-                        ShowchangeSubmenuOptions();
+                if (!keepGoing)
+                {
+                    return ordersList;
+                }
 
-                        RSGymUtility.WriteMessage($"Número: ", "\n", "");
-                        answer = Console.ReadLine();
+                bool isValid = false;
+                string action;
+                do
+                {
+                    Console.Clear();
+                    RSGymUtility.WriteTitle("Alterar pedidos", "\n", "\n\n");
+                    RSGymUtility.WriteMessage($"{user.Name}, insira o número do que deseja alterar no pedido", "", "\n\n");
 
-                        isValid = changeSubmenuOptions.TryGetValue(answer, out action);
+                    ShowchangeSubmenuOptions();
 
-                        if (!isValid)
-                        {
-                            RSGymUtility.WriteMessage("Número inválido.", "", "\n");
-                            keepGoing = UserUtility.KeepGoing();
-                        }
+                    RSGymUtility.WriteMessage($"Número: ", "\n", "");
+                    answer = Console.ReadLine();
+
+                    isValid = changeSubmenuOptions.TryGetValue(answer, out action);
+
+                    if (!isValid)
+                    {
+                        RSGymUtility.WriteMessage("Número inválido.", "", "\n");
+                        keepGoing = UserUtility.KeepGoing();
+                    }
                         
-                    } while (!isValid && keepGoing);
+                } while (!isValid && keepGoing);
 
-                    if (!keepGoing)
-                    {
-                        return null;
-                    };
+                if (!keepGoing)
+                {
+                    return null;
+                };
 
-                    RunChangeSubmenu(action, order, personalTrainersList, user);
+                RunChangeSubmenu(action, order, personalTrainersList, user);
 
-                }
+                
             } while (!isNumber || UserUtility.KeepGoing());
             
             return ordersList; 
@@ -416,18 +448,20 @@ namespace RSGymPT
                     RunDateTimeChange(order, user);
                     break;
                 case "Estado do pedido":
-                    RSGymUtility.WriteMessage("Estado atual do pedido: ", "", "\n");
+                    RSGymUtility.WriteMessage("Estado atual do pedido: ", "\n", "");
                     RSGymUtility.WriteMessage($"{order.OrderStatus}", "", "\n\n");
-                    RSGymUtility.WriteMessage("Insira o novo estado do pedido (2 - Cancelado, 3 - Terminado): ", "", "\n");
+                    RSGymUtility.WriteMessage("Digite o número do novo estado do pedido:\n(2) - Cancelado\n(3) - Terminado: ", "", "\n");
+                    RSGymUtility.WriteMessage("Número: ", "\n", "");
                     string newStatus = Console.ReadLine();
                     bool isValid = orderStatusOptions.TryGetValue(newStatus, out string status);
                     if (!isValid)
                     {
                         RSGymUtility.WriteMessage("Número inválido.", "", "\n");
-                        RSGymUtility.PauseConsole();
                     }
                     else
                     {
+                        RSGymUtility.WriteMessage("Estatus do pedido alterado com sucesso.", "", "\n");
+                        RSGymUtility.WriteMessage($"{order.FullOrder}", "", "\n\n");
                         order.OrderStatus = orderStatusOptions[newStatus];
                     }
                     break;
@@ -448,7 +482,7 @@ namespace RSGymPT
                 ordersList.Remove(ordersList.FirstOrDefault(o => o.OrderId == order.OrderId));
                 ordersList.Add(order);
 
-                RSGymUtility.WriteMessage($"{order.FullOrder}", "", "\n\n");
+                RSGymUtility.WriteMessage($"{order.FullOrder}", "\n", "\n\n");
 
                 RSGymUtility.WriteMessage("Personal Trainer (PT) alterado com sucesso.", "", "\n");
             }
@@ -492,7 +526,7 @@ namespace RSGymPT
             bool isNumber;
             do
             {
-                ListBookedOrders(ordersList, user);
+                ShowBookedOrders(ordersList, user, orderStatusOptions.Values.ElementAt(0));
 
                 RSGymUtility.WriteTitle("Eliminar pedidos", "\n", "\n\n");
                 RSGymUtility.WriteMessage($"{user.Name}, Digite o código do pedido\ne aperte 'Enter'", "", "\n\n");
@@ -523,7 +557,7 @@ namespace RSGymPT
             bool isNumber;
             do
             {
-                ListBookedOrders(ordersList, user);
+                ShowBookedOrders(ordersList, user, orderStatusOptions.Values.ElementAt(0));
 
                 RSGymUtility.WriteTitle("Cancelar pedidos", "\n", "\n\n");
                 RSGymUtility.WriteMessage($"{user.Name}, Digite o código do pedido\ne aperte 'Enter'", "", "\n\n");
@@ -550,52 +584,57 @@ namespace RSGymPT
         }
 
 
-        internal static List<Order> FinishOrder(List<Order> ordersList, List<PersonalTrainer> personalTrainersList, User user)
+        internal static List<Order> FinishOrder(User user)
         {
-            bool isNumber;
+            List<Order> bookedOrders = ShowBookedOrders(ordersList, user, orderStatusOptions.Values.ElementAt(0));
+            Order order = null;
+
             do
             {
-                ListBookedOrders(ordersList, user);
-
                 RSGymUtility.WriteTitle("Terminar Pedidos", "\n", "\n\n");
                 RSGymUtility.WriteMessage($"{user.Name}, Digite o código do pedido\ne aperte 'Enter'", "", "\n\n");
                 RSGymUtility.WriteMessage("Insira o número do pedido que deseja finalizar: ", "", "\n");
 
                 string answer = Console.ReadLine();
 
-                isNumber = int.TryParse(answer, out int orderNumber);
+                order = bookedOrders.FirstOrDefault(o => o.OrderId == int.Parse(answer));
 
-                Order order = ordersList.FirstOrDefault(o => o.OrderId == orderNumber);
-
-                if (!isNumber || order == null)
+                if (order == null)
                 {
-                    RSGymUtility.WriteMessage("Número inválido.", "", "\n");
+                    RSGymUtility.WriteMessage("Ordem inexistente.", "", "\n");
                 }
                 else
                 {
                     order.OrderStatus = orderStatusOptions.Values.ElementAt(2);
+                    ordersList.Remove(ordersList.FirstOrDefault(o => o.OrderId == order.OrderId));
+                    ordersList.Add(order);
+
                     RSGymUtility.WriteMessage("Pedido finalizado com sucesso.", "", "\n");
                 }
-            } while (!isNumber || UserUtility.KeepGoing());
+            } while (order == null || UserUtility.KeepGoing());
 
             return ordersList;
         }
 
 
-        internal static void ListBookedOrders(List<Order> ordersList, User user)
+        internal static List<Order> ShowBookedOrders(List<Order> ordersList, User user, string status)
         {
             Console.Clear();
 
+            List<Order> bookedOrders = ordersList.Where(o => o.UserId == user.UserId && o.OrderStatus == status).ToList();
+
             RSGymUtility.WriteTitle("Pedidos registados", "\n", "\n");
-            RSGymUtility.WriteMessage($"{user.Name}.", "", "\n\n");
+            RSGymUtility.WriteMessage($"{user.Name},", "", "\n\n");
 
             foreach (Order order in ordersList)
             {
-                if (order.OrderStatus == "Agendado")
+                if (order.OrderStatus == status)
                 {
                     RSGymUtility.WriteMessage($"{order.FullOrder}", "", "\n");
                 }
             }
+
+            return bookedOrders;
         }
 
 
