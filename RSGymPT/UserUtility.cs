@@ -138,7 +138,7 @@ namespace RSGymPT
         {
             bool status = false;
 
-            if (ordersList.Count == 0)
+            if (ordersList.Count == 0 || ordersList == null)
             {
                 switch (action)
                 {
