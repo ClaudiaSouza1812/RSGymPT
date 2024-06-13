@@ -23,7 +23,7 @@ namespace Utility
         public static void WriteTitle(string title, string beginTitle = "", string endTitle = "")
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write($"{beginTitle}{new string('-', title.Length)}\n{title.ToUpper()}\n{new string('-', title.Length)}{endTitle}");
+            Console.Write($"{beginTitle}{new string('-', 44)}\n{title.ToUpper().PadLeft(22 - (title.Length / 2) + title.Length , ' ')}\n{new string('-', 44)}{endTitle}");
             Console.ForegroundColor = ConsoleColor.White;   // Reset original color
         }
 
@@ -46,7 +46,7 @@ namespace Utility
         public static void PauseConsole()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("\n\nPrime qualquer tecla para continuar.\n");
+            Console.Write("\nPrime qualquer tecla para continuar.");
             Console.ForegroundColor = ConsoleColor.White;
             Console.ReadKey();
         }

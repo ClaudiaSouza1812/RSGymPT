@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Internal;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,25 +12,12 @@ namespace RSGymPT
     {
         static void Main(string[] args)
         {
+            // Method to output characters encoded to UTF-8 
             RSGymUtility.SetUnicodeConsole();
 
-            List<User> users = new List<User>();
+            UserUtility.RunRSGymProgram();
 
-            
-            User user01 = new User("Claudia Simone de Souza", new DateTime(1992, 12, 18), "clasi", "12345678");
-            users.Add(user01);
-
-            User user02 = new User();
-            user02.Name = "Paula de Fátima Vallim Magalhães";
-            user02.Birth = new DateTime(1984, 12, 08);
-            user02.UserName = "paufa";
-            user02.Password = "87654321";
-
-            users.Add(user02);
-
-            User.ListUser(users);
-
-            RSGymUtility.TerminateConsole();
+        
         }
     }
 }
