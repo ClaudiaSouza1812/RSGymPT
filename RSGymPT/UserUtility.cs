@@ -128,7 +128,7 @@ namespace RSGymPT
                 case "Terminar":
                     if (ValidateOrderList("Terminar"))
                     {
-                        ordersList = Order.FinishOrder(ordersList, personalTrainersList, user);
+                        ordersList = Order.FinishOrder(user);
                     }
                     break;
             }
@@ -138,7 +138,7 @@ namespace RSGymPT
         {
             bool status = false;
 
-            if (ordersList.Count == 0)
+            if (ordersList == null || ordersList.Count == 0)
             {
                 switch (action)
                 {

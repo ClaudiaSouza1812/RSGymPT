@@ -104,7 +104,7 @@ namespace RSGymPT
 
             if (personalTrainer == null)
             {
-                RSGymUtility.WriteMessage("Código inexistente.", "", "\n");
+                RSGymUtility.WriteMessage("Código inexistente.", "\n", "\n");
                 return personalTrainer;
             }
 
@@ -114,7 +114,7 @@ namespace RSGymPT
         // Function to ask and return the PT code
         internal static string AskPtCode()
         {
-            RSGymUtility.WriteMessage("Digite o código do PT: ", "\n\n", "\n");
+            RSGymUtility.WriteMessage("Digite o código do PT: ", "\n\n", "");
 
             string ptCode = Console.ReadLine().ToUpper();
             return ptCode;
@@ -141,7 +141,7 @@ namespace RSGymPT
         {
             foreach (PersonalTrainer pt in personalTrainersList)
             {
-                RSGymUtility.WriteMessage($"({pt.PtCode}) ");
+                RSGymUtility.WriteMessage($"({pt.PtCode}) - {pt.FullName} ");
             }
         }
 
