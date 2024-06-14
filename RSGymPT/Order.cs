@@ -51,10 +51,6 @@ namespace RSGymPT
 
         #endregion
 
-        #region Classic properties 1.0
-      
-        #endregion
-
         #region Bodied-expression properties 3.0
         // Property to show the full order
         internal string FullOrder => $"(Pedido): {OrderId}, (PT): {PtCode}, (Data e hora da sessão): {TrainingDateTime}, (Estado): {OrderStatus} ";
