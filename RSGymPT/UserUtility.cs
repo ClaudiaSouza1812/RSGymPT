@@ -180,7 +180,7 @@ namespace RSGymPT
                     } while (KeepGoing());
                     break;
                 case "Listar":
-                    PersonalTrainer.ListPersonalTrainers(personalTrainersList, user);
+                    PersonalTrainer.ListFullPersonalTrainers(personalTrainersList, user);
                     break;
             }
         }
@@ -404,7 +404,7 @@ namespace RSGymPT
 
         internal static bool CheckDelete()
         {
-            RSGymUtility.WriteMessage("Tem certeza que deseja eliminar2 o pedido? (s/n): ", "\n");
+            RSGymUtility.WriteMessage("Tem certeza que deseja eliminar o pedido? (s/n): ", "\n");
             string answer = Console.ReadLine().ToLower();
 
             if (answer == "s")
@@ -437,12 +437,7 @@ namespace RSGymPT
             return userName;
         }
 
-        // Function to check if the username is valid, returning true or false
-        internal static bool CheckUserName(List<User> usersList, string userName)
-        {
-            bool isValid = usersList.Any(u => u.UserName == userName);
-            return isValid;
-        }
+        
 
         // Function to ask and return the user password 
         internal static string AskUserPassword()
@@ -468,12 +463,7 @@ namespace RSGymPT
         }
 
 
-        // Function to validate and return the user 
-        internal static User ValidateUser(List<User> usersList, string userName, string password)
-        {
-            User user = usersList.FirstOrDefault(u => u.UserName == userName && u.Password == password);
-            return user;
-        }
+        
     }
 }
 

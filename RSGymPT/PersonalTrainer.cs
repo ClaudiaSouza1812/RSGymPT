@@ -1,9 +1,13 @@
-﻿using System;
+﻿// Purpose: Contains the PersonalTrainer class, which represents a personal trainer in the system.
+// The class contains properties, constructors, and methods to create, find, validate, and list personal trainers.
+// The class also contains a method to create and return 3 initial personal trainers.
+// Restriction: The class is internal
+// Version 1.0
+
+// libraries to be used in the class
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using Utility;
 
 namespace RSGymPT
@@ -30,6 +34,7 @@ namespace RSGymPT
         internal string FullPersonalTrainer => $"{PersonalTrainerId} - (Código): {PtCode}\n(Nome): {FullName}\n(Telemóvel): {CellPhone}";
 
         #endregion
+
         #endregion
 
         #region Constructors (public or internal)
@@ -51,8 +56,8 @@ namespace RSGymPT
             CellPhone = cellPhone;
             PtCode = ptCode;
         }
-        #endregion
 
+        #endregion
 
         #region Methods (public or internal)
 
@@ -77,11 +82,11 @@ namespace RSGymPT
             RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer (PT)", "", "\n\n");
             RSGymUtility.WriteMessage($"{userName}, Digite o código de um dos\n(PT) disponíveis abaixo e aperte 'Enter'", "", "\n\n");
 
-            PersonalTrainer.ListPartialPersonalTrainer(personalTrainersList);
+            ListPartialPersonalTrainer(personalTrainersList);
 
             string ptCode = PersonalTrainerUtility.AskPtCode();
 
-            PersonalTrainer personalTrainer = PersonalTrainer.ValidatePersonalTrainer(personalTrainersList, ptCode);
+            PersonalTrainer personalTrainer = ValidatePersonalTrainer(personalTrainersList, ptCode);
 
             if (personalTrainer == null)
             {
@@ -132,7 +137,6 @@ namespace RSGymPT
             RSGymUtility.PauseConsole();
         }
 
-        
         #endregion
     }
 }

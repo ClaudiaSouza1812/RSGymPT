@@ -1,11 +1,13 @@
-﻿using System;
+﻿// Purpose: Class to create and manage users in the system.
+// The class contains properties, constructors, and methods to create, validate, and list users.
+// The class also contains a method to create and return 2 initial users.
+// Restriction: The class is internal
+// Version 1.0
+
+// Libraries to be used in the class
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Utility;
 
 
@@ -14,19 +16,12 @@ namespace RSGymPT
     internal class User
     {
         #region Fields (properties, private variables)
-        /*
-        variáveis internas da classe para serem usadas dentro das propriedades (Classic properties / Bodied-expression properties)
-        */
-
+        
         #endregion
 
         #region Properties (public or internal)
         #region Auto-implemented properties 2.0
-        /* 
-        Exemplo de uma propriedade usando Auto-implemented properties
-        internal string Operator { get; set; } // propriedade no singular
-        */
-
+        
         internal int UserId { get; }
         private static int NextId { get; set; } = 1;
         internal string Name { get; set; }
@@ -36,18 +31,17 @@ namespace RSGymPT
 
         #endregion
 
-       
-
         #region Bodied-expression properties 3.0
+        // Property to show the full user
         internal string FullUser => $"(Id): {UserId}\n(Nome): {Name}\n(Data de nascimento): {Birth.ToShortDateString()}";
 
-
         #endregion
+
         #endregion
 
         #region Constructors (public or internal)
-        // Fazer substituto do default constructor
-
+        
+        // Default constructor substitute
         internal User()
         {
             UserId = NextId++;
@@ -56,8 +50,8 @@ namespace RSGymPT
             UserName = string.Empty;
             Password = string.Empty;
         }
-        // Fazer segundo construtor com inserção parâmetros obrigatórios
-
+        
+        // Second constructor with mandatory parameters
         internal User(string name, DateTime birth, string userName, string password)
         {
             UserId = NextId++;
@@ -66,6 +60,7 @@ namespace RSGymPT
             UserName = userName;
             Password = password;
         }
+
         #endregion
 
         #region Methods (public or internal)
@@ -88,7 +83,7 @@ namespace RSGymPT
 
             string userName = UserUtility.AskUserName();
 
-            if (!UserUtility.CheckUserName(usersList, userName))
+            if (!CheckUserName(usersList, userName))
             {
                 RSGymUtility.WriteMessage("Nome de utilizador inválido ou inexistente.", "", "\n");
 
@@ -98,7 +93,7 @@ namespace RSGymPT
 
             string password = UserUtility.AskUserPassword();
 
-            User user = UserUtility.ValidateUser(usersList, userName, UserUtility.EncryptPassword(password));
+            User user = ValidateUser(usersList, userName, UserUtility.EncryptPassword(password));
 
             if (user == null)
             {
@@ -108,6 +103,20 @@ namespace RSGymPT
                 return user;
             }
 
+            return user;
+        }
+
+        // Function to check if the username is valid, returning true or false
+        internal static bool CheckUserName(List<User> usersList, string userName)
+        {
+            bool isValid = usersList.Any(u => u.UserName == userName);
+            return isValid;
+        }
+
+        // Function to validate and return the user 
+        internal static User ValidateUser(List<User> usersList, string userName, string password)
+        {
+            User user = usersList.FirstOrDefault(u => u.UserName == userName && u.Password == password);
             return user;
         }
 
@@ -125,7 +134,6 @@ namespace RSGymPT
             }
             RSGymUtility.PauseConsole();
         }
-
 
         #endregion
     }
