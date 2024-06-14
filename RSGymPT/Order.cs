@@ -1,6 +1,5 @@
-﻿// Purpose: Class to manage the orders of the Personal Trainers (PT) and Users.
-// The class contains properties, constructors, and methods to create, validate, and list orders.
-// The class also contains methods to change, cancel, and finish orders.
+﻿// Purpose: Contains the Order class and its methods.
+// The Order class is responsible for creating, changing, deleting, and listing orders.
 // Restriction: The class is internal
 // Version 1.0
 
@@ -16,7 +15,7 @@ namespace RSGymPT
     {
         #region Fields (properties, private variables)
         // List to store the orders
-        private static List<Order> ordersList = new List<Order>();
+        internal static List<Order> ordersList = new List<Order>();
 
         // Dictionary to store the order status options
         private static Dictionary<string, string> orderStatusOptions = new Dictionary<string, string>()
@@ -108,14 +107,14 @@ namespace RSGymPT
                     return ordersList;
                 }
 
-                DateTime? trainingDateTime = GetTrainingDateTime(ptCode, user);
+                DateTime? trainingDateTime = OrderUtility.GetTrainingDateTime(ptCode, user);
 
                 if (trainingDateTime == null)
                 {
                     return ordersList;
                 }
 
-                if (CheckUserAvailability((DateTime)trainingDateTime, user) && CheckPtAvailability((DateTime)trainingDateTime, ptCode))
+                if (OrderUtility.CheckUserAvailability((DateTime)trainingDateTime, user) && OrderUtility.CheckPtAvailability((DateTime)trainingDateTime, ptCode))
                 {
                     Order order = new Order();
                     order.UserId = user.UserId;
@@ -133,200 +132,6 @@ namespace RSGymPT
             } while (UserUtility.KeepGoing());
 
             return ordersList;
-        }
-
-        // Function to show the sessions range of hours
-        internal static List<DateTime> CreateHoursRange(DateTime dateTime)
-        {
-            DateTime minHour = dateTime.Date.AddHours(9);
-            DateTime maxHour = dateTime.Date.AddHours(21);
-            int range = maxHour.Hour - minHour.Hour;
-            List<DateTime> sessionsRange = new List<DateTime>();
-
-
-            for (int i = 0; i <= range; i++)
-            {
-                sessionsRange.Add(minHour.AddHours(i));
-            }
-            return sessionsRange;
-        }
-
-        // Function to show the available sessions for the Personal Trainer (PT)
-        internal static void ShowPersonalTrainerAvailableSessions(List<Order> odersList, string ptCode, DateTime dateTime)
-        {
-            List<DateTime> sessionsRange = CreateHoursRange(dateTime);
-
-            List<DateTime> ptSessions = GetPtSessionsForDate(ptCode, dateTime);
-
-
-            RSGymUtility.WriteMessage($"({ptCode}) - Sessões disponíveis: {dateTime.ToShortDateString()}", "\n", "\n");
-
-            List<string> availableSessions = new List<string>();
-
-            foreach (DateTime session in sessionsRange)
-            {
-                if (CheckIfSessionIsAvailable(session, dateTime, ptSessions))
-                {
-                    availableSessions.Add($"({session.ToShortTimeString()})");
-                }
-            }
-
-            if (availableSessions.Any())
-            {
-                RSGymUtility.WriteMessage(string.Join(" ", availableSessions), "", "\n");
-            }
-            else
-            {
-                RSGymUtility.WriteMessage("Nenhum horário disponível para hoje.", "", "\n");
-            }
-        }
-
-        // Function to show the available sessions for the User
-        internal static void ShowUserAvailableSessions(List<Order> odersList, User user, DateTime dateTime)
-        {
-            List<DateTime> sessionsRange = CreateHoursRange(dateTime);
-
-            List<DateTime> userSessions = GetUserSessionsForDate(user, dateTime); ;
-
-
-            RSGymUtility.WriteMessage($"({user.Name}) Sessões disponíveis: {dateTime.ToShortDateString()}", "\n\n", "\n");
-
-            List<string> availableSessions = new List<string>();
-
-            foreach (DateTime session in sessionsRange)
-            {
-                if (CheckIfSessionIsAvailable(session, dateTime, userSessions))
-                {
-                    availableSessions.Add($"({session.ToShortTimeString()})");
-                }
-            }
-
-            if (availableSessions.Any())
-            {
-                RSGymUtility.WriteMessage(string.Join(" ", availableSessions), "", "\n");
-            }
-            else
-            {
-                RSGymUtility.WriteMessage("Nenhum horário disponível para hoje.", "", "\n");
-            }
-        }
-
-        // Function to get the Personal Trainer (PT) sessions for a specific date
-        private static List<DateTime> GetPtSessionsForDate(string ptCode, DateTime dateTime)
-        {
-            List<DateTime> ptSessions =  ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Date == dateTime.Date && pt.OrderStatus == "Agendado").Select(pt => pt.TrainingDateTime).ToList();
-
-            return ptSessions;
-        }
-
-        // Function to get the User sessions for a specific date
-        private static List<DateTime> GetUserSessionsForDate(User user, DateTime dateTime)
-        {
-            List<DateTime> userSessions = ordersList.Where(u => u.UserId == user.UserId && u.TrainingDateTime.Date == dateTime.Date && u.OrderStatus == "Agendado").Select(u => u.TrainingDateTime).ToList();
-
-            return userSessions;
-        }
-
-        // Function to check if the session is available
-        private static bool CheckIfSessionIsAvailable(DateTime session, DateTime dateTime, List<DateTime> sessions)
-        {
-            bool isAvailableToday = dateTime.Date == DateTime.Today && !sessions.Contains(session) && session.TimeOfDay > DateTime.Now.TimeOfDay;
-            bool isAvailableFuture = dateTime.Date != DateTime.Today && !sessions.Contains(session);
-
-            return isAvailableToday || isAvailableFuture;
-        }
-
-        // Function to get the date and time of the training session
-        internal static DateTime? GetTrainingDateTime(string ptCode, User user)
-        {
-            DateTime dateTime;
-            DateTime minTime = DateTime.Today.AddHours(9);
-            DateTime maxTime = DateTime.Today.AddHours(21);
-            bool isDateTime = false;
-            do
-            {
-                Console.Clear();
-
-                RSGymUtility.WriteTitle("Registar Pedido de um Personal trainer (PT)", "", "\n\n");
-                RSGymUtility.WriteTitle("Data e Hora da Sessão", "", "\n\n");
-
-                ShowAvailableSessions(ptCode, user);
-
-                RSGymUtility.WriteMessage($"{user.Name}, Insira a data e hora da sessão, ex ({DateTime.Now.ToShortDateString()} {DateTime.Now.Hour + 1}:00): ", "\n\n", "\n");
-                string answer = Console.ReadLine();
-
-                isDateTime = DateTime.TryParse(answer, out dateTime);
-                DateTime nextHour = DateTime.Now.AddHours(1);
-
-                if (!isDateTime)
-                {
-                    RSGymUtility.WriteMessage("Data inválida. Inserir data e hora conforme informado acima.", "", "\n");
-                    
-                }
-                else if (dateTime < DateTime.Now)
-                {
-                    RSGymUtility.WriteMessage("Não é possível agendar sessões no passado. Insira uma data e hora futura.", "", "\n");
-                    isDateTime = false;
-                }
-                else if (dateTime.TimeOfDay < minTime.TimeOfDay || dateTime.TimeOfDay > maxTime.TimeOfDay)
-                {
-                    RSGymUtility.WriteMessage($"As sessões devem ser agendadas entre {minTime.ToShortTimeString()} e {maxTime.ToShortTimeString()}.", "", "\n");
-                    isDateTime = false;
-                }
-                else if (dateTime.Minute != 0)
-                {
-                    RSGymUtility.WriteMessage("Por favor, insira uma hora cheia (ex: 10:00).", "\n", "\n");
-                    isDateTime = false;
-                }
-
-                if (!isDateTime && !UserUtility.KeepGoing())
-                {
-                    return null;
-                }
-
-            } while (!isDateTime);
-            
-            return dateTime;
-        }
-
-        // Function to show the available sessions
-        internal static void ShowAvailableSessions(string ptCode, User user)
-        {
-            ShowPersonalTrainerAvailableSessions(ordersList, ptCode, DateTime.Now);
-            ShowUserAvailableSessions(ordersList, user, DateTime.Now);
-        }
-
-        // Function to check the Personal Trainer (PT) availability
-        internal static bool CheckPtAvailability(DateTime dateTime, string ptCode)
-        {
-            foreach (Order order in ordersList)
-            {
-                DateTime sessionEnd = order.TrainingDateTime.AddMinutes(60);
-
-                if (order.PtCode == ptCode && dateTime >= order.TrainingDateTime && dateTime < sessionEnd && order.OrderStatus != "Cancelado")
-                {
-                    RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n\n", "\n");
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // Function to check the User availability
-        internal static bool CheckUserAvailability(DateTime dateTime, User user)
-        {
-            foreach (Order order in ordersList)
-            {
-                DateTime sessionEnd = order.TrainingDateTime.AddMinutes(50);
-
-                if (user.UserId == order.UserId && dateTime >= order.TrainingDateTime && dateTime < sessionEnd && order.OrderStatus != "Cancelado")
-                {
-                    ListOrdersByUser(user);
-                    RSGymUtility.WriteMessage("Sessões com duração de 50 minutos. Você já tem uma sessão agendada nesta data e horário, escolha outra Data e hora.", "\n", "\n");
-                    return false;
-                }
-            }
-            return true;
         }
 
         // Function to show the change submenu options
@@ -367,7 +172,7 @@ namespace RSGymPT
                     continue;
                 }
 
-                if (order != null && CheckSessionConclusion(order.TrainingDateTime))
+                if (order != null && OrderUtility.CheckSessionConclusion(order.TrainingDateTime))
                 {
                     RSGymUtility.WriteMessage("Sessão em andamento ou concluída, pedido deve ser finalizado.", "", "\n");
                     RSGymUtility.PauseConsole();
@@ -446,21 +251,6 @@ namespace RSGymPT
             return order;
         }
         
-        // Function to check the session conclusion
-        internal static bool CheckSessionConclusion(DateTime trainingDateTime)
-        {
-            if (trainingDateTime.Date > DateTime.Now.Date)
-            {
-                return false;
-            }
-
-            if (trainingDateTime.Date == DateTime.Now.Date && DateTime.Now >= trainingDateTime)
-            {
-                return true;
-            }
-            return false;
-        }
-
         // Function to run the change submenu
         internal static void RunChangeSubmenu(string action, Order order, List<PersonalTrainer> personalTrainersList, User user)
         {
@@ -526,7 +316,7 @@ namespace RSGymPT
                 return;
             }
 
-            bool ptIsAvailable = CheckPtAvailability(order.TrainingDateTime, ptCode);
+            bool ptIsAvailable = OrderUtility.CheckPtAvailability(order.TrainingDateTime, ptCode);
 
             if (ptIsAvailable)
             {
@@ -544,7 +334,7 @@ namespace RSGymPT
         // Function to run the date and time change
         internal static void RunDateTimeChange(Order order, User user)
         {
-            DateTime? trainingDateTime = GetTrainingDateTime(order.PtCode, user);
+            DateTime? trainingDateTime = OrderUtility.GetTrainingDateTime(order.PtCode, user);
 
             if (trainingDateTime == null)
             {
@@ -554,14 +344,14 @@ namespace RSGymPT
             bool ptIsAvailable = false;
             bool userIsAvailable = false;
 
-            userIsAvailable = CheckUserAvailability((DateTime)trainingDateTime, user);
+            userIsAvailable = OrderUtility.CheckUserAvailability((DateTime)trainingDateTime, user);
 
             if (!userIsAvailable)
             {
                 return;
             }
 
-            ptIsAvailable = CheckPtAvailability((DateTime)trainingDateTime, order.PtCode);
+            ptIsAvailable = OrderUtility.CheckPtAvailability((DateTime)trainingDateTime, order.PtCode);
 
             if (!ptIsAvailable)
             {
@@ -658,7 +448,7 @@ namespace RSGymPT
 
         internal static void FinishOrder(Order order, string newStatus)
         {
-            if (order != null && !CheckSessionConclusion(order.TrainingDateTime))
+            if (order != null && !OrderUtility.CheckSessionConclusion(order.TrainingDateTime))
             {
                 RSGymUtility.WriteMessage("Sessão não pode ser terminada por que ainda não foi realizada.", "", "\n");
                 return;
@@ -710,7 +500,7 @@ namespace RSGymPT
 
             } while (!isNumber && keepGoing);
 
-            if (order != null && !CheckSessionConclusion(order.TrainingDateTime))
+            if (order != null && !OrderUtility.CheckSessionConclusion(order.TrainingDateTime))
             {
                 RSGymUtility.WriteMessage("Sessão não pode ser terminada por que ainda não foi realizada.", "\n", "\n");
                 UserUtility.KeepGoing();
