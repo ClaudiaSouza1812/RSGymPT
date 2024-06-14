@@ -100,6 +100,8 @@ namespace RSGymPT
 
             // Show the RSGymPT logo
             ShowLogo("end", user.Name);
+
+            RunLoginMenu();
         }
 
         // Method to run the order submenu
@@ -411,7 +413,7 @@ namespace RSGymPT
             {
                 RSGymUtility.WriteMessage($"{message02.PadLeft(15 - (message02.Length / 2) + message02.Length, ' ')}", "", "\n");
 
-                RSGymUtility.TerminateConsole();
+                RSGymUtility.PauseConsole();
             }
         }
 

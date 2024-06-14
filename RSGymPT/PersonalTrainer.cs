@@ -91,7 +91,6 @@ namespace RSGymPT
             if (personalTrainer == null)
             {
                 RSGymUtility.WriteMessage("Código inexistente.", "\n", "\n");
-                return personalTrainer;
             }
 
             return personalTrainer;
