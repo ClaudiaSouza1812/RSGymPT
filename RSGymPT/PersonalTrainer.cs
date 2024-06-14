@@ -130,6 +130,8 @@ namespace RSGymPT
             RSGymUtility.WriteTitle("Lista de Personal Trainers", "\n", "\n\n");
             RSGymUtility.WriteMessage($"{user.Name}, Personal Trainers disponíveis: ", "", "\n\n");
 
+            personalTrainersList.Sort((pt01, pt02) => pt01.FullName.CompareTo(pt02.FullName));
+
             foreach (PersonalTrainer personalTrainer in personalTrainersList)
             {
                 RSGymUtility.WriteMessage(personalTrainer.FullPersonalTrainer, "", "\n\n");

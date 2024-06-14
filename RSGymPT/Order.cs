@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Deployment.Internal;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Utility;
-using static System.Collections.Specialized.BitVector32;
 
 namespace RSGymPT
 {
@@ -99,7 +93,8 @@ namespace RSGymPT
 
 
         #region Methods (public or internal)
-        // 
+
+        // Function to create an order
         internal static List<Order> CreateOrder(List<PersonalTrainer> personalTrainersList, User user) 
         {
             do
@@ -111,7 +106,7 @@ namespace RSGymPT
 
                 string ptCode = GetPersonalTrainerCode(personalTrainersList, user.Name);
 
-                if (ptCode == null)
+                if (string.IsNullOrEmpty(ptCode))
                 {
                     return ordersList;
                 }
@@ -147,41 +142,35 @@ namespace RSGymPT
         {
             PersonalTrainer personalTrainer;
             bool keepGoing = false;
+
             do
             {
                 personalTrainer = PersonalTrainer.FindPersonalTrainerByCode(personalTrainersList, userName);
-                if (personalTrainer == null)
+
+                if (personalTrainer != null)
                 {
-                    keepGoing = UserUtility.KeepGoing();
-                }
-                else
-                {
-                    keepGoing = false;
+                    return personalTrainer.PtCode;
                 }
 
+                keepGoing = UserUtility.KeepGoing();
+                
             } while (keepGoing);
 
-            if (personalTrainer == null)
-            {
-                return null;
-            }
-
-            return personalTrainer.PtCode;
+            return null;
         }
 
 
-        internal static DateTime[] CreateHoursRange(DateTime dateTime)
+        internal static List<DateTime> CreateHoursRange(DateTime dateTime)
         {
             DateTime minHour = dateTime.Date.AddHours(9);
             DateTime maxHour = dateTime.Date.AddHours(21);
             int range = maxHour.Hour - minHour.Hour;
-            DateTime[] sessionsRange = new DateTime[range + 1];
-            
+            List<DateTime> sessionsRange = new List<DateTime>();
+
 
             for (int i = 0; i <= range; i++)
             {
-                sessionsRange[i] = minHour;
-                minHour = minHour.AddHours(1);
+                sessionsRange.Add(minHour.AddHours(i));
             }
             return sessionsRange;
         }
@@ -189,65 +178,70 @@ namespace RSGymPT
 
         internal static void ShowPersonalTrainerAvailableSessions(List<Order> odersList, string ptCode, DateTime dateTime)
         {
-            bool available = false;
-            DateTime[] sessionsRange = CreateHoursRange(dateTime);
+            List<DateTime> sessionsRange = CreateHoursRange(dateTime);
 
-            DateTime[] ptSessions = ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Date == dateTime.Date && pt.OrderStatus == "Agendado").Select(pt => pt.TrainingDateTime).ToArray();
+            List<DateTime> ptSessions = ordersList.Where(pt => pt.PtCode == ptCode && pt.TrainingDateTime.Date == dateTime.Date && pt.OrderStatus == "Agendado").Select(pt => pt.TrainingDateTime).ToList();
 
             
             RSGymUtility.WriteMessage($"({ptCode}) - Sessões disponíveis: {dateTime.ToShortDateString()}", "\n", "\n");
 
+            List<string> availableSessions = new List<string>();
+
             foreach (DateTime session in sessionsRange)
             {
-                bool isAvailableToday = dateTime.Date == DateTime.Today && !ptSessions.Contains(session) && session.TimeOfDay > DateTime.Now.TimeOfDay;
-                bool isAvailableFuture = dateTime.Date != DateTime.Today && !ptSessions.Contains(session);
-
-                if (isAvailableToday || isAvailableFuture)
+                if (IsSessionAvailable(session, dateTime, ptSessions))
                 {
-                    RSGymUtility.WriteMessage($"({session.ToShortTimeString()}) ");
-                    available = true;
+                    availableSessions.Add($"({session.ToShortTimeString()})");
                 }
-
             }
 
-            if (!available)
+            if (availableSessions.Any())
             {
-                RSGymUtility.WriteMessage("Nenhuma sessão disponível para hoje.", "", "\n");
+                RSGymUtility.WriteMessage(string.Join(" ", availableSessions), "", "\n");
             }
-            
+            else
+            {
+                RSGymUtility.WriteMessage("Nenhum horário disponível para hoje.", "", "\n");
+            }
         }
 
 
         internal static void ShowUserAvailableSessions(List<Order> odersList, User user, DateTime dateTime)
         {
-            bool available = false;
-            DateTime[] sessionsRange = CreateHoursRange(dateTime);
+            List<DateTime> sessionsRange = CreateHoursRange(dateTime);
 
-            DateTime[] userSessions = ordersList.Where(u => u.UserId == user.UserId && u.TrainingDateTime.Date == dateTime.Date && u.OrderStatus == "Agendado").Select(u => u.TrainingDateTime).ToArray();
+            List<DateTime> userSessions = ordersList.Where(u => u.UserId == user.UserId && u.TrainingDateTime.Date == dateTime.Date && u.OrderStatus == "Agendado").Select(u => u.TrainingDateTime).ToList();
 
 
             RSGymUtility.WriteMessage($"({user.Name}) Sessões disponíveis: {dateTime.ToShortDateString()}", "\n\n", "\n");
 
+            List<string> availableSessions = new List<string>();
+
             foreach (DateTime session in sessionsRange)
             {
-                bool isAvailableToday = dateTime.Date == DateTime.Today && !userSessions.Contains(session) && session.TimeOfDay > DateTime.Now.TimeOfDay;
-                bool isAvailableFuture = dateTime.Date != DateTime.Today && !userSessions.Contains(session);
-
-                if (isAvailableToday || isAvailableFuture)
+                if (IsSessionAvailable(session, dateTime, userSessions))
                 {
-                    RSGymUtility.WriteMessage($"({session.ToShortTimeString()}) ");
-                    available = true;
+                    availableSessions.Add($"({session.ToShortTimeString()})");
                 }
             }
 
-            if (!available)
+            if (availableSessions.Any())
+            {
+                RSGymUtility.WriteMessage(string.Join(" ", availableSessions), "", "\n");
+            }
+            else
             {
                 RSGymUtility.WriteMessage("Nenhum horário disponível para hoje.", "", "\n");
             }
-
         }
 
+        private static bool IsSessionAvailable(DateTime session, DateTime dateTime, List<DateTime> sessions)
+        {
+            bool isAvailableToday = dateTime.Date == DateTime.Today && !sessions.Contains(session) && session.TimeOfDay > DateTime.Now.TimeOfDay;
+            bool isAvailableFuture = dateTime.Date != DateTime.Today && !sessions.Contains(session);
 
+            return isAvailableToday || isAvailableFuture;
+        }
 
         internal static DateTime? GetTrainingDateTime(string ptCode, User user)
         {
@@ -277,19 +271,12 @@ namespace RSGymPT
                 }
                 else if (dateTime < DateTime.Now)
                 {
-                    if (nextHour < maxTime)
-                    {
-                        RSGymUtility.WriteMessage($"Agendamento de sessões apenas á partir de {nextHour.Hour}:00.", "", "\n");
-                    }
-                    else
-                    {
-                        RSGymUtility.WriteMessage($"Agendamento de sessões das {minTime.TimeOfDay} ás {maxTime.TimeOfDay}.", "", "\n");
-                    }
+                    RSGymUtility.WriteMessage("Não é possível agendar sessões no passado. Insira uma data e hora futura.", "", "\n");
                     isDateTime = false;
                 }
                 else if (dateTime.TimeOfDay < minTime.TimeOfDay || dateTime.TimeOfDay > maxTime.TimeOfDay)
                 {
-                    RSGymUtility.WriteMessage($"Agendamento de sessões das {minTime.TimeOfDay} ás {maxTime.TimeOfDay}.", "", "\n");
+                    RSGymUtility.WriteMessage($"As sessões devem ser agendadas entre {minTime.ToShortTimeString()} e {maxTime.ToShortTimeString()}.", "", "\n");
                     isDateTime = false;
                 }
                 else if (dateTime.Minute != 0)
@@ -316,6 +303,7 @@ namespace RSGymPT
             ShowUserAvailableSessions(ordersList, user, DateTime.Now);
         }
 
+
         internal static bool CheckPtAvailability(DateTime dateTime, string ptCode)
         {
             foreach (Order order in ordersList)
@@ -327,16 +315,10 @@ namespace RSGymPT
                     RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n\n", "\n");
                     return false;
                 }
-                /*
-                if (order.PtCode != ptCode && dateTime >= order.TrainingDateTime && dateTime < sessionEnd && order.OrderStatus != "Cancelado")
-                {
-                    RSGymUtility.WriteMessage("PT indisponível, escolha outro PT ou outra Data e hora.", "\n\n", "\n");
-                    return false;
-                }
-                */
             }
             return true;
         }
+
 
         internal static bool CheckUserAvailability(DateTime dateTime, User user)
         {
@@ -354,7 +336,8 @@ namespace RSGymPT
             return true;
         }
 
-        internal static void ShowchangeSubmenuOptions()
+
+        internal static void ShowChangeSubmenuOptions()
         {
             foreach (KeyValuePair<string, string> option in changeSubmenuOptions)
             {
@@ -380,7 +363,7 @@ namespace RSGymPT
                     return ordersList;
                 }
                 
-                bool isValid = false;
+                bool isValidAction = false;
                 string action;
                 do
                 {
@@ -388,20 +371,24 @@ namespace RSGymPT
                     RSGymUtility.WriteTitle("Alterar pedidos", "\n", "\n\n");
                     RSGymUtility.WriteMessage($"{user.Name}, insira o número do que deseja alterar no pedido", "", "\n\n");
 
-                    ShowchangeSubmenuOptions();
+                    ShowChangeSubmenuOptions();
 
                     RSGymUtility.WriteMessage($"Número: ", "\n", "");
                     answer = Console.ReadLine();
 
-                    isValid = changeSubmenuOptions.TryGetValue(answer, out action);
+                    isValidAction = changeSubmenuOptions.TryGetValue(answer, out action);
 
-                    if (!isValid)
+                    if (!isValidAction)
                     {
                         RSGymUtility.WriteMessage("Número inválido.", "", "\n");
                         keepGoing = UserUtility.KeepGoing();
                     }
-                        
-                } while (!isValid && keepGoing);
+                    if (!keepGoing)
+                    {
+                        return ordersList;
+                    };
+
+                } while (!isValidAction);
 
                 if (!keepGoing)
                 {
@@ -479,8 +466,6 @@ namespace RSGymPT
                 case "Estado do pedido":
                     RunStateChange(order, user);
                     break;
-                default:
-                    break;
             }
         }
 
@@ -495,6 +480,7 @@ namespace RSGymPT
             string newStatus = Console.ReadLine();
 
             bool isValid = orderStatusOptions.TryGetValue(newStatus, out string status);
+
             if (!isValid)
             {
                 RSGymUtility.WriteMessage("Número inválido.", "", "\n");
@@ -517,6 +503,12 @@ namespace RSGymPT
         internal static void RunPersonalTrainerChange(Order order, List<PersonalTrainer> personalTrainersList, User user)
         {
             string ptCode = GetPersonalTrainerCode(personalTrainersList, user.Name);
+
+            if (string.IsNullOrEmpty(ptCode))
+            {
+                return;
+            }
+
             bool ptIsAvailable = CheckPtAvailability(order.TrainingDateTime, ptCode);
 
             if (ptIsAvailable)

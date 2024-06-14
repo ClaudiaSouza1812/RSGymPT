@@ -33,7 +33,7 @@ namespace RSGymPT
 
         #region Bodied-expression properties 3.0
         // Property to show the full user
-        internal string FullUser => $"(Id): {UserId}\n(Nome): {Name}\n(Data de nascimento): {Birth.ToShortDateString()}";
+        internal string FullUser => $"(Id): {UserId}\n(Nome): {Name}\n(Data de nascimento): {Birth.ToShortDateString()}\n(Nome de utilizador): {UserName}";
 
         #endregion
 
@@ -70,8 +70,8 @@ namespace RSGymPT
         {
             List<User> usersList = new List<User>()
             {
-                new User("Claudia Souza", new DateTime(1992, 12, 18), "clasi", UserUtility.EncryptPassword("12345678")),
-                new User("Paula Magalhães", new DateTime(1984, 12, 08), "paufa", UserUtility.EncryptPassword("87654321"))
+                new User("Claudia Souza", new DateTime(1992, 12, 18), "claudia", UserUtility.EncryptPassword("12345678")),
+                new User("Paula Magalhães", new DateTime(1984, 12, 08), "paula", UserUtility.EncryptPassword("87654321"))
             };
             return usersList;
         }

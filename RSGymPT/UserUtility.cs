@@ -1,10 +1,12 @@
-﻿using System;
+﻿// Purpose: The UserUtility class in the RSGymPT program includes methods for running various menus (login, main, order submenu, personal trainer submenu), displaying these menus and the program logo, validating menu selections, and handling user interactions such as asking for and encrypting passwords, checking if the user wants to continue or delete an order, getting menu choices, and validating the order list.
+// Restrictions: The class is internal
+// Version: 1.0
+
+// Libraries to be used in the class
+using System;
 using System.Collections.Generic;
-using System.Deployment.Internal;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Utility;
 using static System.Collections.Specialized.BitVector32;
 
@@ -12,16 +14,16 @@ namespace RSGymPT
 {
     internal class UserUtility
     {
-        // Create 2 inicial users
+        // Create 2 inicial users in a global list
         private static List<User> usersList = User.CreateUsersList();
 
-        // Create 3 initial PTs
+        // Create 3 initial PTs in a global list
         private static List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatePersonalTrainersList();
 
-        // Create a new user
+        // Create a global user
         private static User user = null;
 
-        // Create a list of orders
+        // Create a global list of orders
         private static List<Order> ordersList = new List<Order>();
 
         // Run the RSGymPT program
@@ -73,6 +75,7 @@ namespace RSGymPT
             int menuKey;
             string[] menuAction;
 
+            // Run the main menu
             do
             {
                 menuKey = GetUserChoice("main", user.Name);
@@ -87,10 +90,7 @@ namespace RSGymPT
                         RunPersonalTrainerSubmenu(menuAction[1]);
                         break;
                     case "Utilizador":
-                        if (menuAction[1] == "Listar")
-                        {
-                            User.ListUser(usersList, user.Name);
-                        }
+                        RunUserSubmenu(menuAction[1]);
                         break;
                     default:
                         RSGymUtility.WriteMessage("Escolha um número válido.");
@@ -98,10 +98,11 @@ namespace RSGymPT
                 }
             } while (menuAction[1] != "Logout");
 
+            // Show the RSGymPT logo
             ShowLogo("end", user.Name);
         }
 
-        // Method to run the order menu
+        // Method to run the order submenu
         internal static void RunOrderSubmenu(string menuAction)
         {
             switch (menuAction)
@@ -110,31 +111,49 @@ namespace RSGymPT
                     ordersList = Order.CreateOrder(personalTrainersList, user);
                     break;
                 case "Alterar":
-                    if (ValidateOrderList("Alterar"))
-                    {
-                        ordersList = Order.ChangeOrder(ordersList, personalTrainersList, user);
-                    };
+                    RunOrderSubmenuChange();
                     break;
                 case "Eliminar":
-                    if (ValidateOrderList("Eliminar"))
-                    {
-                        ordersList = Order.DeleteOrder(ordersList, personalTrainersList, user);
-                    }
+                    RunOrderSubmenuDelete();
                     break;
                 case "Listar":
                     Order.ListOrdersByUser(user);
                     KeepGoing();
                     break;
-
                 case "Terminar":
-                    if (ValidateOrderList("Terminar"))
-                    {
-                        ordersList = Order.FinishOrder(user);
-                    }
+                    RunOrderSubmenuFinish();
                     break;
             }
         }
 
+        // Method to run the order submenu change
+        internal static void RunOrderSubmenuChange()
+        {
+            if (ValidateOrderList("Alterar"))
+            {
+                ordersList = Order.ChangeOrder(ordersList, personalTrainersList, user);
+            };
+        }
+
+        // Method to run the order submenu delete
+        internal static void RunOrderSubmenuDelete()
+        {
+            if (ValidateOrderList("Eliminar"))
+            {
+                ordersList = Order.DeleteOrder(ordersList, personalTrainersList, user);
+            }
+        }
+
+        // Method to run the order submenu finish
+        internal static void RunOrderSubmenuFinish()
+        {
+            if (ValidateOrderList("Terminar"))
+            {
+                ordersList = Order.FinishOrder(user);
+            }
+        }
+
+        // Method to validate the order list
         internal static bool ValidateOrderList(string action)
         {
             bool status = false;
@@ -185,6 +204,41 @@ namespace RSGymPT
             }
         }
 
+        // Method to run the user submenu
+        internal static void RunUserSubmenu(string action)
+        {
+            if (action == "Listar")
+            {
+                User.ListUser(usersList, user.Name);
+            }
+        }
+
+        // Get user menu number choice
+        internal static int GetUserChoice(string chosenMenu, string userName)
+        {
+            int menuNumber;
+            bool status;
+            do
+            {
+                Console.Clear();
+
+                ShowMenu(chosenMenu, userName);
+
+                RSGymUtility.WriteMessage("Número: ", "\n", "");
+                string answer = Console.ReadLine();
+
+                status = int.TryParse(answer, out menuNumber);
+
+                if (!status)
+                {
+                    RSGymUtility.WriteMessage("Digite um número válido.", "\n");
+                }
+
+            } while (!status);
+
+            return menuNumber;
+        }
+
         // Function to show and return the login menu
         internal static Dictionary<string, string> ShowLoginMenu()
         {
@@ -207,7 +261,7 @@ namespace RSGymPT
             return loginMenu;
         }
 
-
+        // Function to show and return the main menu
         internal static Dictionary<string, Dictionary<string, string>> ShowMainMenu(string userName)
         {
             Console.Clear();
@@ -253,34 +307,8 @@ namespace RSGymPT
             return mainMenu;
         }
 
-
-        // Get user menu number choice
-        internal static int GetUserChoice(string chosenMenu, string userName)
-        {
-            int menuNumber;
-            bool status;
-            do
-            {
-                Console.Clear();
-
-                GetMenu(chosenMenu, userName);
-
-                RSGymUtility.WriteMessage("Número: ", "\n", "");
-                string answer = Console.ReadLine();
-
-                status = int.TryParse(answer, out menuNumber);
-
-                if (!status)
-                {
-                    RSGymUtility.WriteMessage("Digite um número válido.", "\n");
-                }
-
-            } while (!status);
-
-            return menuNumber;
-        }
-
-        internal static void GetMenu(string menu, string userName)
+        // Show the chosen menu
+        internal static void ShowMenu(string menu, string userName)
         {
             if (menu == "login")
             {
@@ -293,7 +321,7 @@ namespace RSGymPT
         }
 
 
-        // Check if the input is a valid choice
+        // Validate the login menu
         internal static string ValidateLoginMenu(Dictionary<string, string> loginMenu, int key)
         {
             string action;
@@ -313,6 +341,7 @@ namespace RSGymPT
             return string.Empty;
         }
 
+        // Validate the main menu
         internal static string[] ValidateMainMenu(Dictionary<string, Dictionary<string, string>> mainMenu, int menuKey)
         {
             string[] menuSubmenu = { null, null};
@@ -386,6 +415,7 @@ namespace RSGymPT
             }
         }
 
+        // Function to ask and return the user choice
         internal static bool KeepGoing()
         {
             RSGymUtility.WriteMessage("Continuar? (s/n): ", "\n");
@@ -402,6 +432,7 @@ namespace RSGymPT
             return true;
         }
 
+        // Function to ask and ensure the user wants to delete
         internal static bool CheckDelete()
         {
             RSGymUtility.WriteMessage("Tem certeza que deseja eliminar o pedido? (s/n): ", "\n");
@@ -418,6 +449,7 @@ namespace RSGymPT
             return false;
         }
 
+        // Function to encrypt the user password
         internal static string EncryptPassword(string password)
         {
             using (SHA256Managed sha256 = new SHA256Managed())
@@ -437,23 +469,27 @@ namespace RSGymPT
             return userName;
         }
 
-        
-
         // Function to ask and return the user password 
         internal static string AskUserPassword()
         {
             RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
 
+            // Hide the password
             StringBuilder password = new StringBuilder();
+            // Get the key pressed
             ConsoleKeyInfo key;
 
             do
             {
+                // Get the key pressed without showing it
                 key = Console.ReadKey(true);
 
+                // If the key pressed is not Enter
                 if (key.Key != ConsoleKey.Enter)
                 {
+                    // Append the key pressed to the password
                     password.Append(key.KeyChar);
+                    // Show a * in the console
                     RSGymUtility.WriteMessage("*");
                 }
 
@@ -461,9 +497,6 @@ namespace RSGymPT
 
             return password.ToString();
         }
-
-
-        
     }
 }
 
