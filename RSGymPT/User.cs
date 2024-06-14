@@ -1,24 +1,9 @@
-﻿/*
-    CLASS ELEMENTS:
-        Attributes or fields    = variáveis privadas da classe (suporte às propriedades)
-        Properties              = caraterísticas
-        Methods                 = funcionalidades
-        Constructors            = funcionalidade invocada aquando da criação do objeto
-        Destructor              = funcionalidade que permite indicar como é que o objeto é destruído
-    EXEMPLO
-        Classe: Produto
-        Objects (instâncias da classe): Produto1, Produto2, Produto3...
-        Properties: Nome, Cor, Unidade, ...
-        Methods: Inserir, Pesquisar, Editar, Apagar, ...
-        Constructor: Cor = verde
-        Destructor (log): informar que o objeto vai ser destruído
-
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Utility;
@@ -51,18 +36,7 @@ namespace RSGymPT
 
         #endregion
 
-        #region Classic properties 1.0
-        /* 
-        Exemplo de uma propriedade usando Classic properties
-
-        internal double Value01
-        {
-            get { return value01; }     // Ler o valor da propriedade
-            set { value01 = value; }    // escrever o valor da propriedade
-        }
-        */
-
-        #endregion
+       
 
         #region Bodied-expression properties 3.0
         internal string FullUser => $"(Id): {UserId}\n(Nome): {Name}\n(Data de nascimento): {Birth.ToShortDateString()}";
@@ -101,32 +75,20 @@ namespace RSGymPT
         {
             List<User> usersList = new List<User>()
             {
-                new User("Claudia Souza", new DateTime(1992, 12, 18), "clasi", "12345678"),
-                new User("Paula Magalhães", new DateTime(1984, 12, 08), "paufa", "87654321")
+                new User("Claudia Souza", new DateTime(1992, 12, 18), "clasi", UserUtility.EncryptPassword("12345678")),
+                new User("Paula Magalhães", new DateTime(1984, 12, 08), "paufa", UserUtility.EncryptPassword("87654321"))
             };
-
             return usersList;
         }
-
-
-        /*internal string EncryptPassword(string password)
-        {
-            using (SHA256Managed sha256 = new SHA256Managed())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            };
-            
-        }*/
 
         // Function to login and return the user
         internal static User LogInUser(List<User> usersList)
         {
             RSGymUtility.WriteTitle("Login", "", "\n\n");
 
-            string userName = AskUserName();
+            string userName = UserUtility.AskUserName();
 
-            if (!CheckUserName(usersList, userName))
+            if (!UserUtility.CheckUserName(usersList, userName))
             {
                 RSGymUtility.WriteMessage("Nome de utilizador inválido ou inexistente.", "", "\n");
 
@@ -134,50 +96,18 @@ namespace RSGymPT
                 return null;
             }
 
-            string password = AskUserPassword();
+            string password = UserUtility.AskUserPassword();
 
-            User user = ValidateUser(usersList, userName, password);
+            User user = UserUtility.ValidateUser(usersList, userName, UserUtility.EncryptPassword(password));
 
             if (user == null)
             {
-                RSGymUtility.WriteMessage("Palavra-passe inválida.", "", "\n");
+                RSGymUtility.WriteMessage("Palavra-passe inválida.", "\n", "\n");
 
                 RSGymUtility.PauseConsole();
                 return user;
             }
 
-            return user;
-        }
-
-        // Function to ask and return the user username
-        internal static string AskUserName()
-        {
-            RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
-
-            string userName = Console.ReadLine().ToLower();
-            return userName;
-        }
-
-        // Function to check if the username is valid, returning true or false
-        internal static bool CheckUserName(List<User> usersList, string userName)
-        {
-            bool isValid = usersList.Any(u => u.UserName == userName);
-            return isValid;
-        }
-
-        // Function to ask and return the user password 
-        internal static string AskUserPassword()
-        {
-            RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
-
-            string password = Console.ReadLine().ToLower();
-            return password;
-        }
-
-        // Function to validate and return the user 
-        internal static User ValidateUser(List<User> usersList, string userName, string password)
-        {
-            User user = usersList.FirstOrDefault(u => u.UserName == userName && u.Password == password);
             return user;
         }
 

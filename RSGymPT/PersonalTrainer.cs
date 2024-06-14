@@ -11,19 +11,12 @@ namespace RSGymPT
     internal class PersonalTrainer
     {
         #region Fields (properties, private variables)
-        /*
-        variáveis internas da classe para serem usadas dentro das propriedades (Classic properties / Bodied-expression properties)
-        */
-
+        
         #endregion
 
         #region Properties (public or internal)
         #region Auto-implemented properties 2.0
-        /* 
-        Exemplo de uma propriedade usando Auto-implemented properties
-        internal string Operator { get; set; } // propriedade no singular
-        */
-
+        
         internal int PersonalTrainerId { get; }
         private static int NextId { get; set; } = 1;
         internal string FullName { get; set; }
@@ -32,28 +25,16 @@ namespace RSGymPT
 
         #endregion
 
-        #region Classic properties 1.0
-        /* 
-        Exemplo de uma propriedade usando Classic properties
-
-        internal double Value01
-        {
-            get { return value01; }     // Ler o valor da propriedade
-            set { value01 = value; }    // escrever o valor da propriedade
-        }
-        */
-
-        #endregion
-
         #region Bodied-expression properties 3.0
+        // Property to show the full PT
         internal string FullPersonalTrainer => $"{PersonalTrainerId} - (Código): {PtCode}\n(Nome): {FullName}\n(Telemóvel): {CellPhone}";
 
         #endregion
         #endregion
 
         #region Constructors (public or internal)
-        // Fazer substituto do default constructor
 
+        // Default constructor substitute
         internal PersonalTrainer()
         {
             PersonalTrainerId = NextId++;
@@ -61,8 +42,8 @@ namespace RSGymPT
             CellPhone = string.Empty;   
             PtCode = string.Empty;
         }
-        // Fazer segundo construtor com inserção parâmetros obrigatórios
 
+        // Second constructor with mandatory parameters
         internal PersonalTrainer(string fullName, string cellPhone, string ptCode)
         {
             PersonalTrainerId = NextId++;
@@ -76,7 +57,7 @@ namespace RSGymPT
         #region Methods (public or internal)
 
         // Function to create and return 3 initial Personal Trainers
-        internal static List<PersonalTrainer> CreatepersonalTrainersList()
+        internal static List<PersonalTrainer> CreatePersonalTrainersList()
         {
             List<PersonalTrainer> personalTrainersList = new List<PersonalTrainer>()
             {
@@ -89,18 +70,18 @@ namespace RSGymPT
         }
 
         // Function to find and return PTs
-        internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainersList, string userName) 
+        internal static PersonalTrainer FindPersonalTrainerByCode(List<PersonalTrainer> personalTrainersList, string userName)
         {
             Console.Clear();
 
             RSGymUtility.WriteTitle("Pesquisar Código do Personal Trainer (PT)", "", "\n\n");
             RSGymUtility.WriteMessage($"{userName}, Digite o código de um dos\n(PT) disponíveis abaixo e aperte 'Enter'", "", "\n\n");
 
-            ShowPersonalTrainerCode(personalTrainersList);
+            PersonalTrainer.ListPartialPersonalTrainer(personalTrainersList);
 
-            string ptCode = AskPtCode();
+            string ptCode = PersonalTrainerUtility.AskPtCode();
 
-            PersonalTrainer personalTrainer = ValidatePersonalTrainer(personalTrainersList, ptCode);
+            PersonalTrainer personalTrainer = PersonalTrainer.ValidatePersonalTrainer(personalTrainersList, ptCode);
 
             if (personalTrainer == null)
             {
@@ -109,15 +90,6 @@ namespace RSGymPT
             }
 
             return personalTrainer;
-        }
-
-        // Function to ask and return the PT code
-        internal static string AskPtCode()
-        {
-            RSGymUtility.WriteMessage("Digite o código do PT: ", "\n\n", "");
-
-            string ptCode = Console.ReadLine().ToUpper();
-            return ptCode;
         }
 
         // Function to validate and return the PT 
@@ -136,8 +108,8 @@ namespace RSGymPT
             }   
         }
 
-        // Method to show all PTs code from a list
-        internal static void ShowPersonalTrainerCode(List<PersonalTrainer> personalTrainersList)
+        // Method to list certain properties of PTs from a list
+        internal static void ListPartialPersonalTrainer(List<PersonalTrainer> personalTrainersList)
         {
             foreach (PersonalTrainer pt in personalTrainersList)
             {
@@ -146,7 +118,7 @@ namespace RSGymPT
         }
 
         // Method to list all PTs from a list
-        internal static void ListPersonalTrainers(List<PersonalTrainer> personalTrainersList, User user)
+        internal static void ListFullPersonalTrainers(List<PersonalTrainer> personalTrainersList, User user)
         {
             Console.Clear();
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Deployment.Internal;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Utility;
@@ -15,7 +16,7 @@ namespace RSGymPT
         private static List<User> usersList = User.CreateUsersList();
 
         // Create 3 initial PTs
-        private static List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatepersonalTrainersList();
+        private static List<PersonalTrainer> personalTrainersList = PersonalTrainer.CreatePersonalTrainersList();
 
         // Create a new user
         private static User user = null;
@@ -190,6 +191,7 @@ namespace RSGymPT
             Console.Clear();
 
             RSGymUtility.WriteTitle("RSGymPT Login Menu", "", "\n\n");
+            RSGymUtility.WriteMessage($"Digite o número da opção e aperte 'Enter'", "", "\n\n");
 
             Dictionary<string, string> loginMenu = new Dictionary<string, string>()
             {
@@ -263,7 +265,7 @@ namespace RSGymPT
 
                 GetMenu(chosenMenu, userName);
 
-                RSGymUtility.WriteMessage("Digite o número da opção desejada: ", "\n");
+                RSGymUtility.WriteMessage("Número: ", "\n", "");
                 string answer = Console.ReadLine();
 
                 status = int.TryParse(answer, out menuNumber);
@@ -393,10 +395,84 @@ namespace RSGymPT
             {
                 return true;
             }
-            else
+            if (answer == "n")
             {
                 return false;
             }
+            return true;
+        }
+
+        internal static bool CheckDelete()
+        {
+            RSGymUtility.WriteMessage("Tem certeza que deseja eliminar2 o pedido? (s/n): ", "\n");
+            string answer = Console.ReadLine().ToLower();
+
+            if (answer == "s")
+            {
+                return true;
+            }
+            if (answer == "n")
+            {
+                return false;
+            }
+            return false;
+        }
+
+        internal static string EncryptPassword(string password)
+        {
+            using (SHA256Managed sha256 = new SHA256Managed())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            };
+
+        }
+
+        // Function to ask and return the user username
+        internal static string AskUserName()
+        {
+            RSGymUtility.WriteMessage("Insira seu nome de utilizador: ", "", "\n");
+
+            string userName = Console.ReadLine().ToLower();
+            return userName;
+        }
+
+        // Function to check if the username is valid, returning true or false
+        internal static bool CheckUserName(List<User> usersList, string userName)
+        {
+            bool isValid = usersList.Any(u => u.UserName == userName);
+            return isValid;
+        }
+
+        // Function to ask and return the user password 
+        internal static string AskUserPassword()
+        {
+            RSGymUtility.WriteMessage("Insira sua palavra-passe: ", "", "\n");
+
+            StringBuilder password = new StringBuilder();
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(true);
+
+                if (key.Key != ConsoleKey.Enter)
+                {
+                    password.Append(key.KeyChar);
+                    RSGymUtility.WriteMessage("*");
+                }
+
+            } while (key.Key != ConsoleKey.Enter);
+
+            return password.ToString();
+        }
+
+
+        // Function to validate and return the user 
+        internal static User ValidateUser(List<User> usersList, string userName, string password)
+        {
+            User user = usersList.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            return user;
         }
     }
 }

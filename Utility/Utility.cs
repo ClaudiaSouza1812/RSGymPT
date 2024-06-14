@@ -27,6 +27,7 @@ namespace Utility
             Console.ForegroundColor = ConsoleColor.White;   // Reset original color
         }
 
+        
         // Create a method to show a message setted with skip lines at the beginning and end of it
         public static void WriteMessage(string message, string beginMessage = "", string endMessage = "")
         {
