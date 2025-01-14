@@ -1,4 +1,4 @@
-Project Summary: RSGymPT - Gym Personal Training Management System
+Project Summary: RSGymPT - Gym Personal Training Management System.
 A console-based application for managing personal training sessions at a gym, handling users, trainers, and training schedules.
 Key Technical Highlights:
 
